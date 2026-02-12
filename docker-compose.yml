@@ -1,9 +1,9 @@
 services:
-  hmpps-template-kotlin:
-    image: ghcr.io/ministryofjustice/hmpps-template-kotlin:latest
+  hmpps-document-generation-api:
+    image: ghcr.io/ministryofjustice/hmpps-document-generation-api:latest
     networks:
       - hmpps
-    container_name: hmpps-template-kotlin
+    container_name: hmpps-document-generation-api
     ports:
       - "8080:8080"
     healthcheck:
