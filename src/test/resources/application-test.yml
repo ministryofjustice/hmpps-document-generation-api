@@ -14,6 +14,10 @@ spring:
     show-sql: true
     properties:
       hibernate.generate_statistics: true
+  datasource:
+    hikari:
+      data-source-properties:
+        sslmode: 'disable'
 
 springdoc:
   api-docs:
@@ -24,3 +28,9 @@ springdoc:
 client:
   id: external-movements
   secret: external-movements
+
+db:
+  server: "localhost:5432"
+  name: "document"
+  user: "generate"
+  pass: "t3mp14t3s"

@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: postgres:18
+    networks:
+      - hmpps
+    container_name: document-generation-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=t3mp14t3s
+      - POSTGRES_USER=generate
+      - POSTGRES_DB=document
+
+networks:
+  hmpps:
