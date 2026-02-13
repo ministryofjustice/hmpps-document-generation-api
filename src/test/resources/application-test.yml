@@ -5,11 +5,22 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
-hmpps-auth:
-  url: "http://localhost:8090/auth"
+integration:
+  hmpps-auth:
+    url: "http://localhost:8090/auth"
+
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate.generate_statistics: true
 
 springdoc:
   api-docs:
     enabled: true
   swagger-ui:
     enabled: true
+
+client:
+  id: external-movements
+  secret: external-movements

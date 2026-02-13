@@ -6,27 +6,72 @@ spring:
   application:
     name: hmpps-document-generation-api
 
-#  This jackson configuration is only applied for java.util.Date.
-#  It is ignored for LocalDateTime, and therefore unnecessary for most projects
-#  jackson:
-#    date-format: "yyyy-MM-dd HH:mm:ss"
+  datasource:
+    url: 'jdbc:postgresql://${DB_SERVER}/${DB_NAME}?sslmode=${DB_SSL_MODE}'
+    username: ${DB_USER}
+    password: ${DB_PASS}
+
+    hikari:
+      connectionTimeout: 1000
+      validationTimeout: 500
+      maximumPoolSize: 10
+      auto-commit: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    locations: classpath:db/schema,classpath:db/data
+
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    default-property-inclusion: non_null
+
+  jpa:
+    show-sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      org.hibernate.envers:
+        audit_table_suffix: _audit
+        revision_field_name: rev_id
+        revision_type_field_name: rev_type
+        modified_flag_suffix: _modified
+        store_data_at_delete: true
+        do_not_audit_optimistic_locking_field: false
+    open-in-view: false
 
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${hmpps-auth.url}/.well-known/jwks.json
+          jwk-set-uri: ${integration.hmpps-auth.url}/.well-known/jwks.json
 
       client:
+        registration:
+          default:
+            provider: hmpps-auth
+            client-id: ${client.id}
+            client-secret: ${client.secret}
+            authorization-grant-type: client_credentials
+            scope: read
         provider:
           hmpps-auth:
-            token-uri: ${hmpps-auth.url}/oauth/token
+            token-uri: ${integration.hmpps-auth.url}/oauth/token
+
   http:
     codecs:
       max-in-memory-size: 10MB
+
+  threads.virtual.enabled: true
+
   web:
     error:
       include-message: always
+
+sentry:
+  exception-resolver-order: -2147483647
 
 server:
   port: 8080
@@ -63,3 +108,8 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+logging:
+  level:
+    org.springframework: INFO
+    uk.gov.justice.digital: DEBUG

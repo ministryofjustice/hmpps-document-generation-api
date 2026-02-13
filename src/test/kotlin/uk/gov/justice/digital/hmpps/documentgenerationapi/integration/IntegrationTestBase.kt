@@ -7,7 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.container.PostgresContainer
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
@@ -32,5 +35,21 @@ abstract class IntegrationTestBase {
 
   protected fun stubPingWithResponse(status: Int) {
     hmppsAuth.stubHealthPing(status)
+  }
+
+  companion object {
+    private val pgContainer = PostgresContainer.instance
+
+    @JvmStatic
+    @DynamicPropertySource
+    fun properties(registry: DynamicPropertyRegistry) {
+      pgContainer?.run {
+        registry.add("spring.datasource.url", pgContainer::getJdbcUrl)
+        registry.add("spring.datasource.username", pgContainer::getUsername)
+        registry.add("spring.datasource.password", pgContainer::getPassword)
+      }
+
+      System.setProperty("aws.region", "eu-west-2")
+    }
   }
 }

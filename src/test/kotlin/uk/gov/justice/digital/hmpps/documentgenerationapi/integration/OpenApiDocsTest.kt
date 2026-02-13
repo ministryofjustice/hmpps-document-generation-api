@@ -1,12 +1,9 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.integration
 
 import io.swagger.v3.parser.OpenAPIV3Parser
-import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.MediaType
 import java.time.LocalDate
@@ -66,7 +63,6 @@ class OpenApiDocsTest : IntegrationTestBase() {
   }
 
   @Test
-  @Disabled("TODO Enable this test once you have added security schema to OpenApiConfiguration.OpenAPi().components()")
   fun `the open api json path security requirements are valid`() {
     val result = OpenAPIV3Parser().readLocation("http://localhost:$port/v3/api-docs", null, null)
 
@@ -78,27 +74,7 @@ class OpenApiDocsTest : IntegrationTestBase() {
     }
   }
 
-  @ParameterizedTest
-  @Disabled("TODO Enable this test once you have added security schema to OpenApiConfiguration.OpenAPi().components(). Add the security scheme / roles to @CsvSource")
-  @CsvSource(value = ["security-scheme-name, ROLE_"])
-  fun `the security scheme is setup for bearer tokens`(key: String, role: String) {
-    webTestClient.get()
-      .uri("/v3/api-docs")
-      .accept(MediaType.APPLICATION_JSON)
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.components.securitySchemes.$key.type").isEqualTo("http")
-      .jsonPath("$.components.securitySchemes.$key.scheme").isEqualTo("bearer")
-      .jsonPath("$.components.securitySchemes.$key.description").value<String> {
-        assertThat(it).contains(role)
-      }
-      .jsonPath("$.components.securitySchemes.$key.bearerFormat").isEqualTo("JWT")
-      .jsonPath("$.security[0].$key").isEqualTo(JSONArray().apply { this.add("read") })
-  }
-
   @Test
-  @Disabled("TODO Enable this test once you have an endpoint.")
   fun `all endpoints have a security scheme defined`() {
     webTestClient.get()
       .uri("/v3/api-docs")
