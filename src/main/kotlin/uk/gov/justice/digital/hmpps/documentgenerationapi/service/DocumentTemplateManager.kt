@@ -19,6 +19,7 @@ class DocumentTemplateManager(
 ) {
   fun createOrReplace(request: TemplateRequest, file: MultipartFile?) {
     val existing = docTemplateRepository.findByCode(request.code)
+    file ?: check(existing != null) { "Attempt to create a template without a file" }
     val previousExternalReference = existing?.externalReference
     val dt = existing?.update(request.name, request.description) ?: request.asDocumentTemplate()
     file?.also {

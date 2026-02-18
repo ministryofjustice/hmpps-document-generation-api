@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.envers.RevisionType
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.util.MultiValueMap
@@ -37,6 +38,14 @@ class UploadTemplateIntTest : IntegrationTestBase() {
       username(),
       "ANY_OTHER",
     ).expectStatus().isForbidden
+  }
+
+  @Test
+  fun `400 bad request - attempting to create a template without a file upload`() {
+    val username = username()
+    val request = templateRequest(word(10))
+    val res = uploadTemplate(request, null, username).errorResponse(HttpStatus.BAD_REQUEST)
+    assertThat(res.userMessage).isEqualTo("Invalid request: Attempt to create a template without a file")
   }
 
   @Test
