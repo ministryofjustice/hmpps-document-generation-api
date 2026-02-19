@@ -1,6 +1,8 @@
 integration:
   hmpps-auth:
     url: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
+  document-management:
+    url: "https://document-api-dev.hmpps.service.justice.gov.uk"
 
 springdoc:
   api-docs:

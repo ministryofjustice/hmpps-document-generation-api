@@ -1,4 +1,5 @@
 integration:
   hmpps-auth:
     url: "https://sign-in.hmpps.service.justice.gov.uk/auth"
-
+  document-management:
+    url: "https://document-api.hmpps.service.justice.gov.uk"

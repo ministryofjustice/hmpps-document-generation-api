@@ -31,7 +31,7 @@ class DocumentManagementClient(@Qualifier("documentManagementWebClient") private
   private fun MultipartFile.generateMultipartBody(id: UUID): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
     part(
       "file",
-      this@generateMultipartBody.inputStream,
+      this@generateMultipartBody.resource,
       MediaType.valueOf(this@generateMultipartBody.contentType?.trim().takeUnless { it.isNullOrEmpty() } ?: "application/octet-stream"),
     ).filename(id.toString())
   }.build()
