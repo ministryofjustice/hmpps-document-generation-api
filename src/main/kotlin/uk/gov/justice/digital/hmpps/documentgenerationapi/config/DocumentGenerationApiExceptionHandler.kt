@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -28,6 +29,17 @@ class DocumentGenerationApiExceptionHandler {
       ErrorResponse(
         status = BAD_REQUEST,
         userMessage = "Validation failure: ${e.message}",
+        developerMessage = e.devMessage(),
+      ),
+    )
+
+  @ExceptionHandler(IllegalArgumentException::class, IllegalStateException::class, HttpMessageNotReadableException::class)
+  fun handleGenericBadRequests(e: RuntimeException): ResponseEntity<ErrorResponse> = ResponseEntity
+    .status(BAD_REQUEST)
+    .body(
+      ErrorResponse(
+        status = BAD_REQUEST,
+        userMessage = "Invalid request: ${e.message}",
         developerMessage = e.devMessage(),
       ),
     )

@@ -88,7 +88,7 @@ tasks {
   withType<BuildImageTask>().named("jib") {
     doFirst {
       jib!!.to {
-        tags = setOf(System.getenv("VERSION") ?: "dev")
+        tags = setOf(System.getenv("BUILD_NUMBER") ?: "dev")
         auth {
           username = System.getenv("GITHUB_USERNAME")
           password = System.getenv("GITHUB_PASSWORD")
@@ -105,6 +105,7 @@ jib {
     jvmFlags = mutableListOf("-Duser.timezone=Europe/London")
     mainClass = "uk.gov.justice.digital.hmpps.documentgenerationapi.DocumentGenerationApiKt"
     user = "2000:2000"
+    environment = mapOf("BUILD_NUMBER" to (System.getenv("BUILD_NUMBER") ?: "dev"))
   }
   from {
     image = "eclipse-temurin:25-jre-jammy"

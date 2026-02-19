@@ -61,6 +61,10 @@ spring:
         provider:
           hmpps-auth:
             token-uri: ${integration.hmpps-auth.url}/oauth/token
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 2MB
 
   http:
     codecs:

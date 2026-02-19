@@ -29,6 +29,7 @@ class HmppsAuthApiExtension :
 
   override fun beforeEach(context: ExtensionContext) {
     hmppsAuth.resetRequests()
+    hmppsAuth.grantToken()
   }
 
   override fun afterAll(context: ExtensionContext) {
@@ -41,7 +42,7 @@ class HmppsAuthMockServer : WireMockServer(WIREMOCK_PORT) {
     private const val WIREMOCK_PORT = 8090
   }
 
-  fun stubGrantToken() {
+  fun grantToken() {
     stubFor(
       post(urlEqualTo("/auth/oauth/token"))
         .willReturn(
