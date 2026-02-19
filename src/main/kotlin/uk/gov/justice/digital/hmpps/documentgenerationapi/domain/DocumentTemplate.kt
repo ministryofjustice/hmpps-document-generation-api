@@ -3,10 +3,15 @@ package uk.gov.justice.digital.hmpps.documentgenerationapi.domain
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.Version
+import org.hibernate.envers.AuditJoinTable
 import org.hibernate.envers.Audited
+import org.hibernate.envers.RelationTargetAuditMode
 import org.springframework.data.jpa.repository.JpaRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
 import java.util.Collections.unmodifiableSet
@@ -41,6 +46,17 @@ class DocumentTemplate(
   private var variables: MutableSet<DocumentTemplateVariable> = mutableSetOf()
   fun variables(): Set<DocumentTemplateVariable> = unmodifiableSet(variables)
 
+  @AuditJoinTable(name = "document_template_group_audit")
+  @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+  @ManyToMany(cascade = [CascadeType.ALL])
+  @JoinTable(
+    name = "document_template_group",
+    joinColumns = [JoinColumn(name = "template_id")],
+    inverseJoinColumns = [JoinColumn(name = "template_group_id")],
+  )
+  private var groups: MutableSet<TemplateGroup> = mutableSetOf()
+  fun groups(): Set<TemplateGroup> = unmodifiableSet(groups)
+
   init {
     this.variables.addAll(variables)
   }
@@ -61,6 +77,11 @@ class DocumentTemplate(
     val toAdd = variables.filter { it.first.code !in this.variables.map { tv -> tv.variable.code } }
       .map { DocumentTemplateVariable(this, it.first, it.second) }
     this.variables.addAll(toAdd)
+  }
+
+  fun withGroups(groups: Set<TemplateGroup>) = apply {
+    this.groups.clear()
+    this.groups.addAll(groups)
   }
 }
 

@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateVariable
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
@@ -72,6 +73,9 @@ class UploadTemplateIntTest : IntegrationTestBase() {
         TemplateRequest.Variable("PERSON__NAME", true),
         TemplateRequest.Variable("PERSON__DATE_OF_BIRTH", false),
       ),
+      groups = setOf(
+        TemplateRequest.Group("EXTERNAL_MOVEMENT"),
+      ),
     )
     documentManagementApi.stubUploadDocument()
 
@@ -83,6 +87,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     assertThat(saved.externalReference).isNotNull
     assertThat(saved.variables()).hasSize(3)
     saved.variables().forEach { it.verifyAgainst(request) }
+    assertThat(saved.groups()).hasSize(1)
+    saved.groups().forEach { it.verifyAgainst(request) }
 
     verifyAudit(saved, RevisionType.ADD, username)
   }
@@ -95,12 +101,16 @@ class UploadTemplateIntTest : IntegrationTestBase() {
         "PERSON__PRISON_NUMBER" to true,
         "PERSON__DATE_OF_BIRTH" to false,
       ),
+      requiredGroups = setOf("EXTERNAL_MOVEMENT"),
     )
     val request = templateRequest(
       dt.code,
       variables = setOf(
         TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
         TemplateRequest.Variable("PERSON__NAME", true),
+      ),
+      groups = setOf(
+        TemplateRequest.Group("TEMPORARY_ABSENCE"),
       ),
     )
     documentManagementApi.stubUploadDocument()
@@ -114,6 +124,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     assertThat(saved.externalReference).isNotEqualTo(dt.externalReference)
     assertThat(saved.variables()).hasSize(2)
     saved.variables().forEach { it.verifyAgainst(request) }
+    assertThat(saved.groups()).hasSize(1)
+    saved.groups().forEach { it.verifyAgainst(request) }
 
     verifyAudit(saved, RevisionType.MOD, username)
   }
@@ -123,7 +135,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     name: String = "Name of $code",
     description: String = "Description of $code : $name",
     variables: Set<TemplateRequest.Variable> = setOf(),
-  ) = TemplateRequest(code, name, description, variables)
+    groups: Set<TemplateRequest.Group> = setOf(),
+  ) = TemplateRequest(code, name, description, variables, groups)
 
   private fun uploadTemplate(
     request: TemplateRequest,
@@ -142,6 +155,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     part("name", request.name)
     part("description", request.description)
     part("templateVariables", request.variables)
+    part("templateGroups", request.groups)
     file?.also { part("file", it).filename(it.name) }
   }.build()
 
@@ -151,6 +165,10 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     fun DocumentTemplateVariable.verifyAgainst(request: TemplateRequest) {
       val requested = request.variables.first { it.code == this.variable.code }
       assertThat(mandatory).isEqualTo(requested.required)
+    }
+
+    fun TemplateGroup.verifyAgainst(request: TemplateRequest) {
+      assertThat(request.groups.any { it.code == this.code }).isTrue()
     }
   }
 }

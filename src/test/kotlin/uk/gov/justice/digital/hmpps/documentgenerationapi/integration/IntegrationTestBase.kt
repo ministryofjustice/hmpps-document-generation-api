@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.audit.AuditRevision
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroupRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateVariableRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.container.PostgresContainer
@@ -51,6 +52,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var templateVariableRepository: TemplateVariableRepository
+
+  @Autowired
+  protected lateinit var templateGroupRepository: TemplateGroupRepository
 
   @Autowired
   protected lateinit var transactionTemplate: TransactionTemplate
@@ -117,20 +121,27 @@ abstract class IntegrationTestBase {
   protected fun givenDocumentTemplate(
     docTemplate: DocumentTemplate = documentTemplate(),
     requiredVariables: Map<String, Boolean> = mapOf(),
+    requiredGroups: Set<String> = setOf(),
   ): DocumentTemplate = transactionTemplate.execute {
     val variables = templateVariableRepository.findByCodeIn(requiredVariables.keys).associateBy { it.code }
+    val groups = templateGroupRepository.findByCodeIn(requiredGroups).associateBy { it.code }
     documentTemplateRepository.save(
-      docTemplate.withVariables(
-        requiredVariables.map { requireNotNull(variables[it.key]) { "Template variable not recognised" } to it.value }.toSet(),
-      ),
+      docTemplate
+        .withVariables(
+          requiredVariables.map { requireNotNull(variables[it.key]) { "Template variable not recognised" } to it.value }
+            .toSet(),
+        )
+        .withGroups(
+          requiredGroups.map { requireNotNull(groups[it]) { "Template group not recognised" } }.toSet(),
+        ),
     )
   }
 
   protected fun findDocumentTemplate(code: String): DocumentTemplate? = transactionTemplate.execute {
-    documentTemplateRepository.findByCode(code)?.also {
-        // pull variables inside of transaction to avoid lazy loading exceptions in tests
-        dt ->
+    documentTemplateRepository.findByCode(code)?.also { dt ->
+      // pull variables/groups inside of transaction to avoid lazy loading exceptions in tests
       dt.variables().forEach { it.variable.code }
+      dt.groups().forEach { it.code }
     }
   }
 

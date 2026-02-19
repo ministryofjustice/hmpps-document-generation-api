@@ -26,7 +26,8 @@ class TemplateController(private val templateManager: DocumentTemplateManager) {
     @RequestPart(required = false) description: String?,
     @RequestPart(required = false) file: MultipartFile?,
     @RequestPart(required = false) templateVariables: Set<TemplateRequest.Variable> = emptySet(),
+    @RequestPart(required = false) templateGroups: Set<TemplateRequest.Group> = emptySet(),
   ) {
-    templateManager.createOrReplace(TemplateRequest(code, name, description ?: "", templateVariables), file)
+    templateManager.createOrReplace(TemplateRequest(code, name, description ?: "", templateVariables, templateGroups), file)
   }
 }

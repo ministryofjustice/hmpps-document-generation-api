@@ -95,7 +95,7 @@ create table if not exists document_template_audit
 (
     rev_id             bigint   not null references audit_revision (id),
     rev_type           smallint not null,
-    id                 uuid     not null default uuidv7(),
+    id                 uuid     not null,
     code               text     not null,
     name               text     not null,
     description        text     not null,
@@ -110,11 +110,23 @@ create table if not exists document_template_variable_audit
 (
     rev_id      bigint   not null references audit_revision (id),
     rev_type    smallint not null,
-    id          uuid     not null default uuidv7(),
+    id          uuid     not null,
     template_id uuid     not null,
     variable_id uuid     not null,
     mandatory   boolean  not null,
     constraint pk_document_template_variable_audit primary key (id, rev_id),
     constraint uq_document_template_variable_audit unique (template_id, variable_id, rev_id)
+)
+;
+
+create table if not exists document_template_group_audit
+(
+    rev_id            bigint   not null references audit_revision (id),
+    rev_type          smallint not null,
+    id                uuid     not null default uuidv7(),
+    template_id       uuid     not null,
+    template_group_id uuid     not null,
+    constraint pk_document_template_group_audit primary key (id, rev_id),
+    constraint uq_template_group_audit unique (template_id, template_group_id, rev_id)
 )
 ;
