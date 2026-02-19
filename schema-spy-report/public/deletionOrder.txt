@@ -1,0 +1,10 @@
+document_template_variable
+document_template_group
+document_template_audit
+document_template_variable_audit
+document_template_group_audit
+template_variable
+template_group
+document_template
+audit_revision
+template_variable_domain

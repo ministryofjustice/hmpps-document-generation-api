@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><database name="document" schema="public" type="PostgreSQL - 18.2 (Debian 18.2-1.pgdg13+1)">
+   <sequences>
+      <sequence increment="1" name="audit_revision_id_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table catalog="document" name="audit_revision" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('audit_revision_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="19" type="bigserial" typeCode="-5">
+            <child catalog="document" column="rev_id" foreignKey="document_template_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="document_template_audit"/>
+            <child catalog="document" column="rev_id" foreignKey="document_template_group_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="document_template_group_audit"/>
+            <child catalog="document" column="rev_id" foreignKey="document_template_variable_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="document_template_variable_audit"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="timestamp" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="username" nullable="false" remarks="" size="64" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_audit_revision" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child catalog="document" column="template_id" foreignKey="fk_document_template_group_document_template" implied="false" onDeleteCascade="false" schema="public" table="document_template_group"/>
+            <child catalog="document" column="template_id" foreignKey="fk_document_template_variable_document_template" implied="false" onDeleteCascade="false" schema="public" table="document_template_variable"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_variable_domain"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="version" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="external_reference" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_document_template" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="uq_document_template_code" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="uq_document_template_external_reference" unique="true">
+            <column ascending="true" name="external_reference"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template_audit" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="rev_id" nullable="false" remarks="" size="19" type="int8" typeCode="-5">
+            <parent catalog="document" column="id" foreignKey="document_template_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="audit_revision"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="rev_type" nullable="false" remarks="" size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="code" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_variable_domain"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="version" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="external_reference" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <primaryKey column="rev_id" sequenceNumberInPK="2"/>
+         <index name="pk_document_template_audit" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+         <index name="uq_document_template_audit_external_reference" unique="true">
+            <column ascending="true" name="external_reference"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template_group" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="template_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent catalog="document" column="id" foreignKey="fk_document_template_group_document_template" implied="false" onDeleteCascade="false" schema="public" table="document_template"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="template_group_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent catalog="document" column="id" foreignKey="fk_document_template_group_template_group" implied="false" onDeleteCascade="false" schema="public" table="template_group"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_document_template_group" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="uq_template_group" unique="true">
+            <column ascending="true" name="template_id"/>
+            <column ascending="true" name="template_group_id"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template_group_audit" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="rev_id" nullable="false" remarks="" size="19" type="int8" typeCode="-5">
+            <parent catalog="document" column="id" foreignKey="document_template_group_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="audit_revision"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="rev_type" nullable="false" remarks="" size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="2" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="template_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="template_group_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <primaryKey column="rev_id" sequenceNumberInPK="2"/>
+         <index name="pk_document_template_group_audit" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+         <index name="uq_template_group_audit" unique="true">
+            <column ascending="true" name="template_id"/>
+            <column ascending="true" name="template_group_id"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template_variable" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="template_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent catalog="document" column="id" foreignKey="fk_document_template_variable_document_template" implied="false" onDeleteCascade="false" schema="public" table="document_template"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="variable_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <parent catalog="document" column="id" foreignKey="fk_document_template_variable_variable_id" implied="false" onDeleteCascade="false" schema="public" table="template_variable"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="mandatory" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_document_template_variable" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="uq_document_template_variable" unique="true">
+            <column ascending="true" name="template_id"/>
+            <column ascending="true" name="variable_id"/>
+         </index>
+      </table>
+      <table catalog="document" name="document_template_variable_audit" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="rev_id" nullable="false" remarks="" size="19" type="int8" typeCode="-5">
+            <parent catalog="document" column="id" foreignKey="document_template_variable_audit_rev_id_fkey" implied="false" onDeleteCascade="false" schema="public" table="audit_revision"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="rev_type" nullable="false" remarks="" size="5" type="int2" typeCode="5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="template_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="variable_id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="mandatory" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <primaryKey column="rev_id" sequenceNumberInPK="2"/>
+         <index name="pk_document_template_variable_audit" unique="true">
+            <column ascending="true" name="id"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+         <index name="uq_document_template_variable_audit" unique="true">
+            <column ascending="true" name="template_id"/>
+            <column ascending="true" name="variable_id"/>
+            <column ascending="true" name="rev_id"/>
+         </index>
+      </table>
+      <table catalog="document" name="template_group" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child catalog="document" column="template_group_id" foreignKey="fk_document_template_group_template_group" implied="false" onDeleteCascade="false" schema="public" table="document_template_group"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_variable_domain"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_template_group" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="uq_template_group_code" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+      <table catalog="document" name="template_variable" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
+            <child catalog="document" column="variable_id" foreignKey="fk_document_template_variable_variable_id" implied="false" onDeleteCascade="false" schema="public" table="document_template_variable"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="domain" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent catalog="document" column="code" foreignKey="fk_template_variable_domain" implied="false" onDeleteCascade="false" schema="public" table="template_variable_domain"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <parent catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_variable_domain"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="sequence_number" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="type" nullable="false" remarks="" size="2147483647" type="template_variable_type" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="pk_template_variable" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="uq_template_variable_code" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="uq_template_variable_sequence" unique="true">
+            <column ascending="true" name="domain"/>
+            <column ascending="true" name="sequence_number"/>
+         </index>
+      </table>
+      <table catalog="document" name="template_variable_domain" remarks="" schema="public" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="code" nullable="false" remarks="" size="2147483647" type="text" typeCode="12">
+            <child catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="document_template"/>
+            <child catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="document_template_audit"/>
+            <child catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_group"/>
+            <child catalog="document" column="code" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="public" table="template_variable"/>
+            <child catalog="document" column="domain" foreignKey="fk_template_variable_domain" implied="false" onDeleteCascade="false" schema="public" table="template_variable"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="sequence_number" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <primaryKey column="code" sequenceNumberInPK="1"/>
+         <index name="pk_template_variable_domain" unique="true">
+            <column ascending="true" name="code"/>
+         </index>
+         <index name="uq_template_variable_domain_sequence" unique="true">
+            <column ascending="true" name="sequence_number"/>
+         </index>
+      </table>
+   </tables>
+</database>
