@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplat
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateVariableRepository
-import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.VariableKey
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.container.PostgresContainer
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension
@@ -115,10 +114,16 @@ abstract class IntegrationTestBase {
     id: UUID = newUuid(),
   ): DocumentTemplate = DocumentTemplate(code, name, description, setOf(), externalReference, id)
 
-  protected fun givenDocumentTemplate(docTemplate: DocumentTemplate = documentTemplate(), variableKeys: Set<Pair<VariableKey, Boolean>> = setOf()): DocumentTemplate = transactionTemplate.execute {
-    val mappedKeys = variableKeys.associateBy { it.first }
-    val variables = templateVariableRepository.findByKeyIn(mappedKeys.keys).associateBy { it.key }
-    documentTemplateRepository.save(docTemplate.withVariables(variables.map { it.value to mappedKeys[it.key]!!.second }.toSet()))
+  protected fun givenDocumentTemplate(
+    docTemplate: DocumentTemplate = documentTemplate(),
+    requiredVariables: Map<String, Boolean> = mapOf(),
+  ): DocumentTemplate = transactionTemplate.execute {
+    val variables = templateVariableRepository.findByCodeIn(requiredVariables.keys).associateBy { it.code }
+    documentTemplateRepository.save(
+      docTemplate.withVariables(
+        requiredVariables.map { requireNotNull(variables[it.key]) { "Template variable not recognised" } to it.value }.toSet(),
+      ),
+    )
   }
 
   protected fun findDocumentTemplate(code: String): DocumentTemplate? = transactionTemplate.execute {

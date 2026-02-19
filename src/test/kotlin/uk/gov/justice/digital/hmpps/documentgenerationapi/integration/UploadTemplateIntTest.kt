@@ -11,7 +11,6 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateVariable
-import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.VariableKey
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
@@ -69,9 +68,9 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val request = templateRequest(
       word(8),
       variables = setOf(
-        TemplateRequest.Variable("PERSON", "PERSON__PRISON_NUMBER", true),
-        TemplateRequest.Variable("PERSON", "PERSON__NAME", true),
-        TemplateRequest.Variable("PERSON", "PERSON__DATE_OF_BIRTH", false),
+        TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
+        TemplateRequest.Variable("PERSON__NAME", true),
+        TemplateRequest.Variable("PERSON__DATE_OF_BIRTH", false),
       ),
     )
     documentManagementApi.stubUploadDocument()
@@ -92,16 +91,16 @@ class UploadTemplateIntTest : IntegrationTestBase() {
   fun `200 ok when replacing an existing document`() {
     val username = username()
     val dt = givenDocumentTemplate(
-      variableKeys = setOf(
-        VariableKey("PERSON", "PERSON__PRISON_NUMBER") to true,
-        VariableKey("PERSON", "PERSON__DATE_OF_BIRTH") to false,
+      requiredVariables = mapOf(
+        "PERSON__PRISON_NUMBER" to true,
+        "PERSON__DATE_OF_BIRTH" to false,
       ),
     )
     val request = templateRequest(
       dt.code,
       variables = setOf(
-        TemplateRequest.Variable("PERSON", "PERSON__PRISON_NUMBER", true),
-        TemplateRequest.Variable("PERSON", "PERSON__NAME", true),
+        TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
+        TemplateRequest.Variable("PERSON__NAME", true),
       ),
     )
     documentManagementApi.stubUploadDocument()
@@ -150,7 +149,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     const val UPLOAD_TEMPLATE_URL = "/templates/{code}"
 
     fun DocumentTemplateVariable.verifyAgainst(request: TemplateRequest) {
-      val requested = request.variables.first { it.domain == this.variable.domain && it.code == this.variable.code }
+      val requested = request.variables.first { it.code == this.variable.code }
       assertThat(mandatory).isEqualTo(requested.required)
     }
   }

@@ -8,7 +8,7 @@ data class TemplateRequest(
 ) {
   val type = DocumentType.DOCUMENT_GENERATION_TEMPLATES
 
-  data class Variable(val domain: String, val code: String, val required: Boolean)
+  data class Variable(val code: String, val required: Boolean)
 }
 
 enum class DocumentType {

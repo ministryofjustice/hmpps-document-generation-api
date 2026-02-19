@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentm
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpEntity
+import org.springframework.http.MediaType
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
@@ -27,18 +28,12 @@ class DocumentManagementClient(@Qualifier("documentManagementWebClient") private
     .retryOnTransientException()
     .block()!!
 
-  fun deleteDocument(id: UUID) {
-    webClient.delete()
-      .uri("/documents/{id}", id)
-      .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
-      .retrieve()
-      .toBodilessEntity()
-      .retryOnTransientException()
-      .block()
-  }
-
   private fun MultipartFile.generateMultipartBody(id: UUID): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
-    part("file", this@generateMultipartBody.inputStream).filename(id.toString())
+    part(
+      "file",
+      this@generateMultipartBody.inputStream,
+      MediaType.valueOf(this@generateMultipartBody.contentType?.trim().takeUnless { it.isNullOrEmpty() } ?: "application/octet-stream"),
+    ).filename(id.toString())
   }.build()
 
   companion object {

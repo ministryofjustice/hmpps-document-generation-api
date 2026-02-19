@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.domain
 
-import jakarta.persistence.Embeddable
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
@@ -14,14 +13,15 @@ import java.util.UUID
 @Entity
 @Table
 data class TemplateVariable(
-  val key: VariableKey,
+  val domain: String,
+  val code: String,
   val description: String,
   val sequenceNumber: Int,
   @JdbcType(value = PostgreSQLEnumJdbcType::class)
   val type: Type,
   @Id
   val id: UUID,
-) : VariableDomainCode by key {
+) {
   enum class Type {
     BINARY,
     DATE,
@@ -41,17 +41,6 @@ data class TemplateVariable(
   override fun toString(): String = """TemplateVariable(domain="$domain", code="$code")"""
 }
 
-interface VariableDomainCode {
-  val domain: String
-  val code: String
-}
-
-@Embeddable
-data class VariableKey(
-  override val domain: String,
-  override val code: String,
-) : VariableDomainCode
-
 interface TemplateVariableRepository : JpaRepository<TemplateVariable, UUID> {
-  fun findByKeyIn(keys: Set<VariableKey>): Set<TemplateVariable>
+  fun findByCodeIn(keys: Set<String>): Set<TemplateVariable>
 }

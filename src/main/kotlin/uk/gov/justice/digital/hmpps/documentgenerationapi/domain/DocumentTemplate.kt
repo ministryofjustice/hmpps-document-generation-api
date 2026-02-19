@@ -55,10 +55,10 @@ class DocumentTemplate(
   }
 
   fun withVariables(variables: Set<Pair<TemplateVariable, Boolean>>) = apply {
-    val newVariables = variables.associateBy { it.first.key }
-    this.variables.removeIf { it.variable.key !in newVariables.keys }
-    this.variables.forEach { it.mandatory = requireNotNull(newVariables[it.variable.key]).second }
-    val toAdd = variables.filter { it.first.key !in this.variables.map { tv -> tv.variable.key } }
+    val newVariables = variables.associateBy { it.first.code }
+    this.variables.removeIf { it.variable.code !in newVariables.keys }
+    this.variables.forEach { it.mandatory = requireNotNull(newVariables[it.variable.code]).second }
+    val toAdd = variables.filter { it.first.code !in this.variables.map { tv -> tv.variable.code } }
       .map { DocumentTemplateVariable(this, it.first, it.second) }
     this.variables.addAll(toAdd)
   }

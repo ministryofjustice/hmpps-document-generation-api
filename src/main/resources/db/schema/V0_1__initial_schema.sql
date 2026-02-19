@@ -37,7 +37,7 @@ create table if not exists template_variable
     sequence_number int                    not null,
     type            template_variable_type not null,
     constraint pk_template_variable primary key (id),
-    constraint uq_template_variable_domain_code unique (domain, code),
+    constraint uq_template_variable_code unique (code),
     constraint uq_template_variable_sequence unique (domain, sequence_number),
     constraint fk_template_variable_domain foreign key (domain) references template_variable_domain (code)
 )

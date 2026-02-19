@@ -6,7 +6,6 @@ import jakarta.validation.ValidationException
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.servlet.HandlerInterceptor
-import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext
@@ -41,14 +40,14 @@ class DocumentTemplateContextInterceptor : HandlerInterceptor {
     return true
   }
 
-  override fun postHandle(
+  override fun afterCompletion(
     request: HttpServletRequest,
     response: HttpServletResponse,
     handler: Any,
-    modelAndView: ModelAndView?,
+    ex: Exception?,
   ) {
     DocumentTemplateContext.clear()
-    super.postHandle(request, response, handler, modelAndView)
+    super.afterCompletion(request, response, handler, ex)
   }
 
   private fun getUsername(): String = SecurityContextHolder
