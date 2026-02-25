@@ -11,29 +11,38 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import tools.jackson.databind.node.JsonNodeFactory
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.retryOnTransientException
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
 import java.util.UUID
 
 @Component
-class DocumentManagementClient(@Qualifier("documentManagementWebClient") private val webClient: WebClient) {
+class DocumentManagementClient(
+  @Qualifier("documentManagementWebClient") private val webClient: WebClient,
+) {
   fun uploadDocument(request: TemplateRequest, id: UUID, file: MultipartFile): ManagedDocument = webClient.post()
     .uri("/documents/{type}/{id}", request.type, id)
     .contentType(MULTIPART_FORM_DATA)
     .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
     .header(USERNAME_KEY, DocumentTemplateContext.retrieve().username)
-    .body(BodyInserters.fromMultipartData(file.generateMultipartBody(id)))
+    .body(BodyInserters.fromMultipartData(file.generateMultipartBody(id, request.name)))
     .retrieve()
     .bodyToMono<ManagedDocument>()
     .retryOnTransientException()
     .block()!!
 
-  private fun MultipartFile.generateMultipartBody(id: UUID): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
+  private fun MultipartFile.generateMultipartBody(id: UUID, name: String): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
     part(
       "file",
       this@generateMultipartBody.resource,
       MediaType.valueOf(this@generateMultipartBody.contentType?.trim().takeUnless { it.isNullOrEmpty() } ?: "application/octet-stream"),
     ).filename(id.toString())
+    part(
+      "metadata",
+      JsonNodeFactory.instance.objectNode().apply { put("name", name) },
+      MediaType.APPLICATION_JSON,
+    )
   }.build()
 
   companion object {

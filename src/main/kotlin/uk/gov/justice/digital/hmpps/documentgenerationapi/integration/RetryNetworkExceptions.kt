@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement
+package uk.gov.justice.digital.hmpps.documentgenerationapi.integration
 
 import org.springframework.web.reactive.function.client.WebClientRequestException
 import org.springframework.web.reactive.function.client.WebClientResponseException
