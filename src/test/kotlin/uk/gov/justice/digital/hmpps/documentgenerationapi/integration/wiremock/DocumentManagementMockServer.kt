@@ -23,6 +23,7 @@ class DocumentManagementMockServer : WireMockServer(9000) {
       post(urlPathTemplate("/documents/{documentType}/{documentId}"))
         .withPathParam("documentType", equalTo(DocumentType.DOCUMENT_GENERATION_TEMPLATES.name))
         .withMultipartRequestBody(aMultipart().withName("file"))
+        .withMultipartRequestBody(aMultipart().withName("metadata"))
         .withHeader(SERVICE_NAME_KEY, equalTo(SERVICE_NAME_VALUE))
         .willReturn(
           aResponse()
