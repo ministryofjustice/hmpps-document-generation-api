@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
@@ -137,8 +138,8 @@ abstract class IntegrationTestBase {
     )
   }
 
-  protected fun findDocumentTemplate(code: String): DocumentTemplate? = transactionTemplate.execute {
-    documentTemplateRepository.findByCode(code)?.also { dt ->
+  protected fun findDocumentTemplate(id: UUID): DocumentTemplate? = transactionTemplate.execute {
+    documentTemplateRepository.findByIdOrNull(id)?.also { dt ->
       // pull variables/groups inside of transaction to avoid lazy loading exceptions in tests
       dt.variables().forEach { it.variable.code }
       dt.groups().forEach { it.code }

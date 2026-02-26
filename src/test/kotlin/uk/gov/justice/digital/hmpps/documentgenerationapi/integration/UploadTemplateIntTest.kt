@@ -16,7 +16,9 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenera
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateResponse
 import java.io.File
+import java.util.UUID
 
 class UploadTemplateIntTest : IntegrationTestBase() {
 
@@ -52,10 +54,11 @@ class UploadTemplateIntTest : IntegrationTestBase() {
   fun `200 ok - can update template name and description without overriding file`() {
     val username = username()
     val dt = givenDocumentTemplate()
-    val request = templateRequest(dt.code, "Updated name", "Updated description")
-    uploadTemplate(request, null, username).expectStatus().isNoContent
+    val request = templateRequest(dt.code + "NEW", "Updated name", "Updated description", id = dt.id)
+    val res = uploadTemplate(request, null, username).successResponse<TemplateResponse>()
 
-    val saved = requireNotNull(documentTemplateRepository.findByCode(request.code))
+    val saved = requireNotNull(findDocumentTemplate(res.id))
+    assertThat(saved.code).isEqualTo(request.code)
     assertThat(saved.name).isEqualTo(request.name)
     assertThat(saved.description).isEqualTo(request.description)
     assertThat(saved.externalReference).isEqualTo(dt.externalReference)
@@ -79,9 +82,9 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     )
     documentManagementApi.stubUploadDocument()
 
-    uploadTemplate(request, File(word(6)), username).expectStatus().isNoContent
+    val res = uploadTemplate(request, File(word(6)), username).successResponse<TemplateResponse>()
 
-    val saved = requireNotNull(findDocumentTemplate(request.code))
+    val saved = requireNotNull(findDocumentTemplate(res.id))
     assertThat(saved.name).isEqualTo(request.name)
     assertThat(saved.description).isEqualTo(request.description)
     assertThat(saved.externalReference).isNotNull
@@ -104,7 +107,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
       requiredGroups = setOf("EXTERNAL_MOVEMENT"),
     )
     val request = templateRequest(
-      dt.code,
+      id = dt.id,
+      code = dt.code,
       variables = setOf(
         TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
         TemplateRequest.Variable("PERSON__NAME", true),
@@ -116,9 +120,9 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     documentManagementApi.stubUploadDocument()
     documentManagementApi.stubDeleteDocument(dt.externalReference)
 
-    uploadTemplate(request, File(word(6)), username).expectStatus().isNoContent
+    uploadTemplate(request, File(word(6)), username).expectStatus().isOk
 
-    val saved = requireNotNull(findDocumentTemplate(dt.code))
+    val saved = requireNotNull(findDocumentTemplate(dt.id))
     assertThat(saved.name).isEqualTo(request.name)
     assertThat(saved.description).isEqualTo(request.description)
     assertThat(saved.externalReference).isNotEqualTo(dt.externalReference)
@@ -136,7 +140,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     description: String = "Description of $code : $name",
     variables: Set<TemplateRequest.Variable> = setOf(),
     groups: Set<TemplateRequest.Group> = setOf(),
-  ) = TemplateRequest(code, name, description, variables, groups)
+    id: UUID? = null,
+  ) = TemplateRequest(id, code, name, description, variables, groups)
 
   private fun uploadTemplate(
     request: TemplateRequest,
@@ -152,15 +157,12 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     .exchange()
 
   private fun generateMultipartBody(request: TemplateRequest, file: File?): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
-    part("name", request.name)
-    part("description", request.description)
-    part("templateVariables", request.variables)
-    part("templateGroups", request.groups)
+    part("template", request)
     file?.also { part("file", it).filename(it.name) }
   }.build()
 
   companion object {
-    const val UPLOAD_TEMPLATE_URL = "/templates/{code}"
+    const val UPLOAD_TEMPLATE_URL = "/templates"
 
     fun DocumentTemplateVariable.verifyAgainst(request: TemplateRequest) {
       val requested = request.variables.first { it.code == this.variable.code }
