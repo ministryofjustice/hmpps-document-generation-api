@@ -4,6 +4,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Immutable
+import org.springframework.data.jpa.repository.JpaRepository
 
 @Immutable
 @Entity
@@ -14,3 +15,5 @@ class TemplateVariableDomain(
   val description: String,
   val sequenceNumber: Int,
 )
+
+interface TemplateVariableDomainRepository : JpaRepository<TemplateVariableDomain, String>
