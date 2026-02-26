@@ -14,8 +14,8 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.service.DocumentTempla
 
 @RestController
 @RequestMapping(value = ["/templates"])
+@PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
 class TemplateController(private val templateManager: DocumentTemplateManager) {
-  @PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
   @PutMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
   fun createOrReplaceTemplate(
     @RequestPart template: TemplateRequest,

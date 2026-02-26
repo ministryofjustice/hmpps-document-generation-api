@@ -7,7 +7,7 @@ data class TemplateRequest(
   val id: UUID?,
   val code: String,
   val name: String,
-  val description: String = "",
+  val description: String?,
   val variables: Set<Variable> = emptySet(),
   val groups: Set<Group> = emptySet(),
 ) {
