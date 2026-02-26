@@ -21,7 +21,7 @@ import java.util.UUID
 @Entity
 @Table
 class DocumentTemplate(
-  val code: String,
+  code: String,
   name: String,
   description: String,
   variables: Set<DocumentTemplateVariable>,
@@ -31,6 +31,9 @@ class DocumentTemplate(
 ) {
   @Version
   var version: Int? = null
+    private set
+
+  var code: String = code
     private set
 
   var name: String = name
@@ -65,7 +68,8 @@ class DocumentTemplate(
     externalReference = newUuid()
   }
 
-  fun update(name: String, description: String) = apply {
+  fun update(code: String, name: String, description: String) = apply {
+    this.code = code
     this.name = name
     this.description = description
   }
@@ -85,6 +89,4 @@ class DocumentTemplate(
   }
 }
 
-interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID> {
-  fun findByCode(code: String): DocumentTemplate?
-}
+interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID>

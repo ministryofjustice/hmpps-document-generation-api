@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
 import org.springframework.web.multipart.MultipartFile
@@ -9,6 +10,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroupRe
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateVariableRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement.DocumentManagementClient
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateResponse
 
 @Service
 class DocumentTemplateManager(
@@ -18,10 +20,10 @@ class DocumentTemplateManager(
   private val variableRepository: TemplateVariableRepository,
   private val groupRepository: TemplateGroupRepository,
 ) {
-  fun createOrReplace(request: TemplateRequest, file: MultipartFile?) {
-    val existing = docTemplateRepository.findByCode(request.code)
+  fun createOrReplace(request: TemplateRequest, file: MultipartFile?): TemplateResponse {
+    val existing = request.id?.let { docTemplateRepository.findByIdOrNull(it) }
     file ?: check(existing != null) { "Attempt to create a template without a file" }
-    val dt = existing?.update(request.name, request.description) ?: request.asDocumentTemplate()
+    val dt = existing?.update(request.code, request.name, request.description) ?: request.asDocumentTemplate()
     file?.also {
       val er = existing?.withNewExternalReference()?.externalReference ?: dt.externalReference
       val managed = dmc.uploadDocument(request, er, it)
@@ -41,6 +43,7 @@ class DocumentTemplateManager(
       }
       saved.withGroups(request.groups.map { validateTemplateGroup(it.code) }.toSet())
     }
+    return TemplateResponse(dt.id)
   }
 }
 
