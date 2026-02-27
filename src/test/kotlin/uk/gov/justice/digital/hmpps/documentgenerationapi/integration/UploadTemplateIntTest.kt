@@ -51,6 +51,14 @@ class UploadTemplateIntTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `400 bad request - attempting to create a template invalid character for code`() {
+    val username = username()
+    val request = templateRequest(code = "Aa1_!?")
+    val res = uploadTemplate(request, null, username).errorResponse(HttpStatus.BAD_REQUEST)
+    assertThat(res.userMessage).isEqualTo("Validation failure: Only alphanumeric characters and underscores are permitted")
+  }
+
+  @Test
   fun `200 ok - can update template name and description without overriding file`() {
     val username = username()
     val dt = givenDocumentTemplate()

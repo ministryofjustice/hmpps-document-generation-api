@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenera
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.NamedDescription
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroupTemplates
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateSummary
 
 class GetTemplatesByGroupIntTest : IntegrationTestBase() {
 
@@ -49,7 +50,7 @@ class GetTemplatesByGroupIntTest : IntegrationTestBase() {
     assertThat(res).isEqualTo(
       TemplateGroupTemplates(
         NamedDescription(grp.code, grp.name, grp.description),
-        listOf(NamedDescription(template.code, template.name, template.description)),
+        listOf(TemplateSummary(template.id, template.code, template.name, template.description)),
       ),
     )
   }
@@ -57,7 +58,11 @@ class GetTemplatesByGroupIntTest : IntegrationTestBase() {
   private fun getTemplateGroups(
     code: String,
     username: String = username(),
-    role: String? = listOf(Roles.DOCUMENT_GENERATION_UI, Roles.DOCUMENT_GENERATION_RO, Roles.DOCUMENT_GENERATION_RW).random(),
+    role: String? = listOf(
+      Roles.DOCUMENT_GENERATION_UI,
+      Roles.DOCUMENT_GENERATION_RO,
+      Roles.DOCUMENT_GENERATION_RW,
+    ).random(),
   ) = webTestClient
     .get()
     .uri(GET_TEMPLATES_IN_GROUP_URL, code)

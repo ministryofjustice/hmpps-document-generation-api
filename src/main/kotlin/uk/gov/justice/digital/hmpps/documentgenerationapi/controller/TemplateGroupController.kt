@@ -13,10 +13,10 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.service.RetrieveTempla
 
 @RestController
 @RequestMapping(value = ["/groups"])
-@PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
 class TemplateGroupController(
   private val retrieve: RetrieveTemplateGroups,
 ) {
+  @PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
   @GetMapping(produces = [APPLICATION_JSON_VALUE])
   fun getTemplateGroups(): TemplateGroups = retrieve.all()
 

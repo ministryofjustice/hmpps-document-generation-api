@@ -6,9 +6,10 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplat
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroupRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.getGroup
-import uk.gov.justice.digital.hmpps.documentgenerationapi.model.NamedDescription
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroupTemplates
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroups
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateSummary
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.asGroup
 
 @Service
 class RetrieveTemplateGroups(
@@ -23,6 +24,4 @@ class RetrieveTemplateGroups(
     return TemplateGroupTemplates(group.asGroup(), templates.map { it.asTemplate() }.sortedBy { it.name })
   }
 }
-
-private fun TemplateGroup.asGroup() = NamedDescription(code, name, description)
-private fun DocumentTemplate.asTemplate() = NamedDescription(code, name, description)
+private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description)

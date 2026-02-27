@@ -14,7 +14,9 @@ import org.hibernate.envers.Audited
 import org.hibernate.envers.RelationTargetAuditMode
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.findByIdOrNull
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.exception.NotFoundException
 import java.util.Collections.unmodifiableSet
 import java.util.UUID
 
@@ -94,3 +96,5 @@ interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID> {
   @Query("select tmp from DocumentTemplate tmp join tmp.groups grp where grp.id = :groupId")
   fun findByGroupCode(groupId: UUID): List<DocumentTemplate>
 }
+
+fun DocumentTemplateRepository.getDocumentTemplate(id: UUID) = findByIdOrNull(id) ?: throw NotFoundException(DocumentTemplate::class, id)
