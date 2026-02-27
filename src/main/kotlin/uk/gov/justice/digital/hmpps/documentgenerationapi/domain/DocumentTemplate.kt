@@ -13,6 +13,7 @@ import org.hibernate.envers.AuditJoinTable
 import org.hibernate.envers.Audited
 import org.hibernate.envers.RelationTargetAuditMode
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
 import java.util.Collections.unmodifiableSet
 import java.util.UUID
@@ -89,4 +90,7 @@ class DocumentTemplate(
   }
 }
 
-interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID>
+interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID> {
+  @Query("select tmp from DocumentTemplate tmp join tmp.groups grp where grp.id = :groupId")
+  fun findByGroupCode(groupId: UUID): List<DocumentTemplate>
+}

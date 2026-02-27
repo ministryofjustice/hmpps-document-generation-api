@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.NamedDescription
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroups
 
 class GetTemplateGroupsIntTest : IntegrationTestBase() {
@@ -24,18 +25,18 @@ class GetTemplateGroupsIntTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `200 ok can retrieve variables grouped by domain`() {
+  fun `200 ok can retrieve template groups`() {
     val res = getTemplateGroups().successResponse<TemplateGroups>()
 
     assertThat(res).isEqualTo(
       TemplateGroups(
         listOf(
-          TemplateGroups.Group(
+          NamedDescription(
             code = "EXTERNAL_MOVEMENT",
             name = "External movement templates",
             description = "Document templates associated with external movements in general. These require a person to be selected",
           ),
-          TemplateGroups.Group(
+          NamedDescription(
             code = "TEMPORARY_ABSENCE",
             name = "Temporary absence templates",
             description = "Document templates associated with temporary absences. These require a person and a temporary absence to be selected",

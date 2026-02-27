@@ -5,6 +5,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Immutable
 import org.springframework.data.jpa.repository.JpaRepository
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.exception.NotFoundException
 import java.util.UUID
 
 @Immutable
@@ -15,7 +17,7 @@ data class TemplateGroup(
   val name: String,
   val description: String,
   @Id
-  val id: UUID,
+  val id: UUID = newUuid(),
 ) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -28,5 +30,8 @@ data class TemplateGroup(
 }
 
 interface TemplateGroupRepository : JpaRepository<TemplateGroup, UUID> {
+  fun findByCode(code: String): TemplateGroup?
   fun findByCodeIn(code: Set<String>): Set<TemplateGroup>
 }
+
+fun TemplateGroupRepository.getGroup(code: String): TemplateGroup = findByCode(code) ?: throw NotFoundException(TemplateGroup::class, code)

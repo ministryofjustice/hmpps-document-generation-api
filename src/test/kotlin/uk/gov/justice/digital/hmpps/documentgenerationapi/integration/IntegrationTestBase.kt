@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.audit.AuditRevision
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroupRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateVariableRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
@@ -110,6 +111,14 @@ abstract class IntegrationTestBase {
   protected final fun WebTestClient.ResponseSpec.errorResponse(status: HttpStatus): ErrorResponse = expectStatus().isEqualTo(status)
     .expectBody<ErrorResponse>()
     .returnResult().responseBody!!
+
+  protected fun templateGroup(
+    code: String = word(8),
+    name: String = word(16),
+    description: String = word(20),
+  ) = TemplateGroup(code, name, description)
+
+  protected fun givenTemplateGroup(templateGroup: TemplateGroup) = templateGroupRepository.save(templateGroup)
 
   protected fun documentTemplate(
     code: String = word(16),
