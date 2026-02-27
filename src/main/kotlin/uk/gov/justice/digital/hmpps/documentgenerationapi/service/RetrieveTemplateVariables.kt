@@ -17,12 +17,12 @@ class RetrieveTemplateVariables(
     val variables = variableRepository.findAll().groupBy { it.domain }
     return TemplateVariables(domains.map { it.withVariables(variables[it.code] ?: emptyList()) })
   }
-
-  private fun TemplateVariableDomain.withVariables(variables: List<TemplateVariable>) = TemplateVariables.Domain(
-    code,
-    description,
-    variables.sortedBy { it.sequenceNumber }.map { it.asVariable() },
-  )
-
-  private fun TemplateVariable.asVariable() = TemplateVariables.Variable(code, description, type)
 }
+
+private fun TemplateVariableDomain.withVariables(variables: List<TemplateVariable>) = TemplateVariables.Domain(
+  code,
+  description,
+  variables.sortedBy { it.sequenceNumber }.map { it.asVariable() },
+)
+
+private fun TemplateVariable.asVariable() = TemplateVariables.Variable(code, description, type)
