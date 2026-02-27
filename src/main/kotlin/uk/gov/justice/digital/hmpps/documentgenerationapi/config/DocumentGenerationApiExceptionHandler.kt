@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.HandlerMethodValidationException
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.exception.NotFoundException
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
 @RestControllerAdvice
@@ -33,7 +34,11 @@ class DocumentGenerationApiExceptionHandler {
       ),
     )
 
-  @ExceptionHandler(IllegalArgumentException::class, IllegalStateException::class, HttpMessageNotReadableException::class)
+  @ExceptionHandler(
+    IllegalArgumentException::class,
+    IllegalStateException::class,
+    HttpMessageNotReadableException::class,
+  )
   fun handleGenericBadRequests(e: RuntimeException): ResponseEntity<ErrorResponse> = ResponseEntity
     .status(BAD_REQUEST)
     .body(
@@ -69,6 +74,17 @@ class DocumentGenerationApiExceptionHandler {
         status = NOT_FOUND,
         userMessage = "No resource found failure: ${e.message}",
         developerMessage = e.message,
+      ),
+    )
+
+  @ExceptionHandler(NotFoundException::class)
+  fun handleNoResourceFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> = ResponseEntity
+    .status(NOT_FOUND)
+    .body(
+      ErrorResponse(
+        status = NOT_FOUND,
+        userMessage = "Not found: ${e.message}",
+        developerMessage = "${e.entity} with identifier ${e.identifier}",
       ),
     )
 
