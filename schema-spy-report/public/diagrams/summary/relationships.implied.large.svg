@@ -338,58 +338,10 @@
 <polyline fill="none" stroke="#000000" points="339.5,-112.2 335.5065,-112.4276 "/>
 <ellipse fill="none" stroke="#000000" cx="332.3117" cy="-112.6098" rx="3.2" ry="3.2"/>
 </g>
-<!-- document_template_variable -->
-<g id="node8" class="node">
-<title>document_template_variable</title>
-<g id="a_node8"><a xlink:href="../../tables/document_template_variable.html" xlink:title="document_template_variable" target="_top">
-<polygon fill="#ffffff" stroke="transparent" points="598,-336.2 598,-466.2 832,-466.2 832,-336.2 598,-336.2"/>
-<polygon fill="#f5f5f5" stroke="transparent" points="598,-443.2 598,-466.2 832,-466.2 832,-443.2 598,-443.2"/>
-<polygon fill="none" stroke="#000000" points="598,-443.2 598,-466.2 832,-466.2 832,-443.2 598,-443.2"/>
-<text text-anchor="start" x="603" y="-451.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">document_template_variable</text>
-<text text-anchor="start" x="797.5219" y="-451.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
-<polygon fill="none" stroke="#000000" points="598,-421.2 598,-443.2 832,-443.2 832,-421.2 598,-421.2"/>
-<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-438.2"/>
-<text text-anchor="start" x="627" y="-428.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
-<polygon fill="#ffffff" stroke="transparent" points="598,-399.2 598,-421.2 832,-421.2 832,-399.2 598,-399.2"/>
-<polygon fill="none" stroke="#000000" points="598,-399.2 598,-421.2 832,-421.2 832,-399.2 598,-399.2"/>
-<image xlink:href="../../images/foreignKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-416.2"/>
-<text text-anchor="start" x="627" y="-406.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">template_id</text>
-<polygon fill="#ffffff" stroke="transparent" points="598,-377.2 598,-399.2 832,-399.2 832,-377.2 598,-377.2"/>
-<polygon fill="none" stroke="#000000" points="598,-377.2 598,-399.2 832,-399.2 832,-377.2 598,-377.2"/>
-<image xlink:href="../../images/foreignKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-394.2"/>
-<text text-anchor="start" x="627" y="-384.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">variable_id</text>
-<polygon fill="none" stroke="#000000" points="598,-355.2 598,-377.2 832,-377.2 832,-355.2 598,-355.2"/>
-<text text-anchor="start" x="627" y="-362.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">mandatory</text>
-<polygon fill="#ffffff" stroke="transparent" points="598,-336.2 598,-355.2 713,-355.2 713,-336.2 598,-336.2"/>
-<polygon fill="none" stroke="#000000" points="598,-336.2 598,-355.2 713,-355.2 713,-336.2 598,-336.2"/>
-<text text-anchor="start" x="601" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">&lt; 2</text>
-<polygon fill="#ffffff" stroke="transparent" points="713,-336.2 713,-355.2 772,-355.2 772,-336.2 713,-336.2"/>
-<polygon fill="none" stroke="#000000" points="713,-336.2 713,-355.2 772,-355.2 772,-336.2 713,-336.2"/>
-<text text-anchor="start" x="762.8862" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
-<polygon fill="#ffffff" stroke="transparent" points="772,-336.2 772,-355.2 832,-355.2 832,-336.2 772,-336.2"/>
-<polygon fill="none" stroke="#000000" points="772,-336.2 772,-355.2 832,-355.2 832,-336.2 772,-336.2"/>
-<text text-anchor="start" x="822.8862" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
-</a>
-</g>
-</g>
-<!-- document_template_variable&#45;&gt;template_variable -->
-<g id="edge8" class="edge">
-<title>document_template_variable:w&#45;&gt;template_variable:e</title>
-<path fill="none" stroke="#000000" d="M583.5562,-390.1225C527.2313,-406.6526 562.8742,-524.2 491.5,-524.2"/>
-<polygon fill="#000000" stroke="#000000" points="590.0699,-389.2556 598.475,-391.7685 594.035,-388.7278 598,-388.2 598,-388.2 598,-388.2 594.035,-388.7278 597.525,-384.6315 590.0699,-389.2556 590.0699,-389.2556"/>
-<ellipse fill="none" stroke="#000000" cx="586.8979" cy="-389.6778" rx="3.2" ry="3.2"/>
-</g>
-<!-- document_template_variable&#45;&gt;document_template -->
-<g id="edge7" class="edge">
-<title>document_template_variable:w&#45;&gt;document_template:e</title>
-<path fill="none" stroke="#000000" d="M583.9975,-406.7407C573.4463,-400.2253 571.0486,-385.7506 557,-374.2 531.6621,-353.3675 531.3024,-329.2 498.5,-329.2"/>
-<polygon fill="#000000" stroke="#000000" points="590.2335,-408.2813 597.1366,-413.6949 594.1167,-409.2406 598,-410.2 598,-410.2 598,-410.2 594.1167,-409.2406 598.8634,-406.7051 590.2335,-408.2813 590.2335,-408.2813"/>
-<ellipse fill="none" stroke="#000000" cx="587.1269" cy="-407.5138" rx="3.2" ry="3.2"/>
-</g>
 <!-- document_template_audit -->
-<g id="node9" class="node">
+<g id="node8" class="node">
 <title>document_template_audit</title>
-<g id="a_node9"><a xlink:href="../../tables/document_template_audit.html" xlink:title="document_template_audit" target="_top">
+<g id="a_node8"><a xlink:href="../../tables/document_template_audit.html" xlink:title="document_template_audit" target="_top">
 <polygon fill="#ffffff" stroke="transparent" points="304.5,-579.2 304.5,-797.2 518.5,-797.2 518.5,-579.2 304.5,-579.2"/>
 <polygon fill="#f5f5f5" stroke="transparent" points="304.5,-774.2 304.5,-797.2 518.5,-797.2 518.5,-774.2 304.5,-774.2"/>
 <polygon fill="none" stroke="#000000" points="304.5,-774.2 304.5,-797.2 518.5,-797.2 518.5,-774.2 304.5,-774.2"/>
@@ -440,6 +392,54 @@
 <path fill="none" stroke="#000000" stroke-dasharray="5,2" d="M291.0263,-690.9396C257.2097,-655.3602 271.6064,-480.2 225.5,-480.2"/>
 <polygon fill="#000000" stroke="#000000" points="297.2449,-693.829 302.983,-700.4648 300.8724,-695.5145 304.5,-697.2 304.5,-697.2 304.5,-697.2 300.8724,-695.5145 306.017,-693.9352 297.2449,-693.829 297.2449,-693.829"/>
 <ellipse fill="none" stroke="#000000" cx="294.3429" cy="-692.4806" rx="3.2" ry="3.2"/>
+</g>
+<!-- document_template_variable -->
+<g id="node9" class="node">
+<title>document_template_variable</title>
+<g id="a_node9"><a xlink:href="../../tables/document_template_variable.html" xlink:title="document_template_variable" target="_top">
+<polygon fill="#ffffff" stroke="transparent" points="598,-336.2 598,-466.2 832,-466.2 832,-336.2 598,-336.2"/>
+<polygon fill="#f5f5f5" stroke="transparent" points="598,-443.2 598,-466.2 832,-466.2 832,-443.2 598,-443.2"/>
+<polygon fill="none" stroke="#000000" points="598,-443.2 598,-466.2 832,-466.2 832,-443.2 598,-443.2"/>
+<text text-anchor="start" x="603" y="-451.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">document_template_variable</text>
+<text text-anchor="start" x="797.5219" y="-451.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">[table]</text>
+<polygon fill="none" stroke="#000000" points="598,-421.2 598,-443.2 832,-443.2 832,-421.2 598,-421.2"/>
+<image xlink:href="../../images/primaryKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-438.2"/>
+<text text-anchor="start" x="627" y="-428.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">id</text>
+<polygon fill="#ffffff" stroke="transparent" points="598,-399.2 598,-421.2 832,-421.2 832,-399.2 598,-399.2"/>
+<polygon fill="none" stroke="#000000" points="598,-399.2 598,-421.2 832,-421.2 832,-399.2 598,-399.2"/>
+<image xlink:href="../../images/foreignKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-416.2"/>
+<text text-anchor="start" x="627" y="-406.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">template_id</text>
+<polygon fill="#ffffff" stroke="transparent" points="598,-377.2 598,-399.2 832,-399.2 832,-377.2 598,-377.2"/>
+<polygon fill="none" stroke="#000000" points="598,-377.2 598,-399.2 832,-399.2 832,-377.2 598,-377.2"/>
+<image xlink:href="../../images/foreignKeys.png" width="11px" height="12px" preserveAspectRatio="xMinYMin meet" x="603" y="-394.2"/>
+<text text-anchor="start" x="627" y="-384.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">variable_id</text>
+<polygon fill="none" stroke="#000000" points="598,-355.2 598,-377.2 832,-377.2 832,-355.2 598,-355.2"/>
+<text text-anchor="start" x="627" y="-362.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">mandatory</text>
+<polygon fill="#ffffff" stroke="transparent" points="598,-336.2 598,-355.2 713,-355.2 713,-336.2 598,-336.2"/>
+<polygon fill="none" stroke="#000000" points="598,-336.2 598,-355.2 713,-355.2 713,-336.2 598,-336.2"/>
+<text text-anchor="start" x="601" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">&lt; 2</text>
+<polygon fill="#ffffff" stroke="transparent" points="713,-336.2 713,-355.2 772,-355.2 772,-336.2 713,-336.2"/>
+<polygon fill="none" stroke="#000000" points="713,-336.2 713,-355.2 772,-355.2 772,-336.2 713,-336.2"/>
+<text text-anchor="start" x="762.8862" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
+<polygon fill="#ffffff" stroke="transparent" points="772,-336.2 772,-355.2 832,-355.2 832,-336.2 772,-336.2"/>
+<polygon fill="none" stroke="#000000" points="772,-336.2 772,-355.2 832,-355.2 832,-336.2 772,-336.2"/>
+<text text-anchor="start" x="822.8862" y="-342.3" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
+</a>
+</g>
+</g>
+<!-- document_template_variable&#45;&gt;template_variable -->
+<g id="edge8" class="edge">
+<title>document_template_variable:w&#45;&gt;template_variable:e</title>
+<path fill="none" stroke="#000000" d="M583.5562,-390.1225C527.2313,-406.6526 562.8742,-524.2 491.5,-524.2"/>
+<polygon fill="#000000" stroke="#000000" points="590.0699,-389.2556 598.475,-391.7685 594.035,-388.7278 598,-388.2 598,-388.2 598,-388.2 594.035,-388.7278 597.525,-384.6315 590.0699,-389.2556 590.0699,-389.2556"/>
+<ellipse fill="none" stroke="#000000" cx="586.8979" cy="-389.6778" rx="3.2" ry="3.2"/>
+</g>
+<!-- document_template_variable&#45;&gt;document_template -->
+<g id="edge7" class="edge">
+<title>document_template_variable:w&#45;&gt;document_template:e</title>
+<path fill="none" stroke="#000000" d="M583.9975,-406.7407C573.4463,-400.2253 571.0486,-385.7506 557,-374.2 531.6621,-353.3675 531.3024,-329.2 498.5,-329.2"/>
+<polygon fill="#000000" stroke="#000000" points="590.2335,-408.2813 597.1366,-413.6949 594.1167,-409.2406 598,-410.2 598,-410.2 598,-410.2 594.1167,-409.2406 598.8634,-406.7051 590.2335,-408.2813 590.2335,-408.2813"/>
+<ellipse fill="none" stroke="#000000" cx="587.1269" cy="-407.5138" rx="3.2" ry="3.2"/>
 </g>
 </g>
 </svg>
