@@ -57,7 +57,7 @@ class GetTemplatesByGroupIntTest : IntegrationTestBase() {
   private fun getTemplateGroups(
     code: String,
     username: String = username(),
-    role: String? = listOf(Roles.DOCUMENT_GENERATION_UI, Roles.DOCUMENT_GENERATION_RO).random(),
+    role: String? = listOf(Roles.DOCUMENT_GENERATION_UI, Roles.DOCUMENT_GENERATION_RO, Roles.DOCUMENT_GENERATION_RW).random(),
   ) = webTestClient
     .get()
     .uri(GET_TEMPLATES_IN_GROUP_URL, code)

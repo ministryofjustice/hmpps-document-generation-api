@@ -18,9 +18,9 @@ class TemplateGroupController(
   private val retrieve: RetrieveTemplateGroups,
 ) {
   @GetMapping(produces = [APPLICATION_JSON_VALUE])
-  fun getTemplateVariables(): TemplateGroups = retrieve.all()
+  fun getTemplateGroups(): TemplateGroups = retrieve.all()
 
-  @PreAuthorize("hasAnyRole('${Roles.DOCUMENT_GENERATION_UI}', '${Roles.DOCUMENT_GENERATION_RO}')")
+  @PreAuthorize("hasAnyRole('${Roles.DOCUMENT_GENERATION_UI}', '${Roles.DOCUMENT_GENERATION_RO}', '${Roles.DOCUMENT_GENERATION_RW}')")
   @GetMapping("/{groupCode}")
   fun getTemplatesForGroup(@PathVariable groupCode: String): TemplateGroupTemplates = retrieve.templates(groupCode)
 }
