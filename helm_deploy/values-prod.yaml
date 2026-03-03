@@ -16,3 +16,6 @@ generic-service:
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
   alertSeverity: move-and-improve-alerts
+  rdsAlertsDatabases:
+    cloud-platform-fd7746eb3d9871e5: "Document Generation API"
+  rdsAlertsConnectionThreshold: 50
