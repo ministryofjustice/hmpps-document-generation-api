@@ -42,7 +42,7 @@ class GetTemplateDetailIntTest : IntegrationTestBase() {
     res.verifyAgainst(template)
     assertThat(res.groups).hasSize(2)
     assertThat(res.groups.map { it.code }).containsExactly("EXTERNAL_MOVEMENT", "TEMPORARY_ABSENCE")
-    assertThat(res.variables.domains).hasSize(3)
+    assertThat(res.variables.domains.map { it.code }).containsExactly("PRISON", "PERSON", "TEMPORARY_ABSENCE")
     res.variables.domains.forEach { domain ->
       when (domain.code) {
         "PERSON" -> assertThat(domain.variables.single().code).isEqualTo("PERSON__PRISON_NUMBER")
