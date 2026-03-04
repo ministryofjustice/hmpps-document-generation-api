@@ -39,11 +39,12 @@ private fun DocumentTemplate.detail(domainProvider: (String) -> TemplateVariable
 private fun Set<TemplateGroup>.detail() = map(TemplateGroup::asGroup).sortedBy { it.name }
 private fun Set<DocumentTemplateVariable>.detail(domainProvider: (String) -> TemplateVariableDomain) = groupBy { it.variable.domain }.map { e ->
   val domain = domainProvider(e.key)
-  TemplateVariables.Domain(
+  val tvd = TemplateVariables.Domain(
     domain.code,
     domain.description,
     e.value
       .sortedBy { it.variable.sequenceNumber }
       .map { TemplateVariables.Variable(it.variable.code, it.variable.description, it.variable.type) },
   )
-}.let(::TemplateVariables)
+  domain.sequenceNumber to tvd
+}.sortedBy { it.first }.map { it.second }.let(::TemplateVariables)
