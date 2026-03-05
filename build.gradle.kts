@@ -5,17 +5,17 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.3"
-  kotlin("plugin.spring") version "2.3.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.0.4"
+  kotlin("plugin.spring") version "2.3.10"
   kotlin("plugin.jpa") version "2.3.10"
   id("com.google.cloud.tools.jib") version "3.5.3"
   id("de.undercouch.download") version "5.7.0"
 }
 
-val hmppsKotlinVersion = "2.0.0"
-val sentryVersion = "8.32.0"
-val springDocVersion = "3.0.1"
-val swaggerParserVersion = "2.1.37"
+val hmppsKotlinVersion = "2.0.2"
+val sentryVersion = "8.34.1"
+val springDocVersion = "3.0.2"
+val swaggerParserVersion = "2.1.38"
 val testContainersVersion = "1.21.4"
 val uuidGeneratorVersion = "5.2.0"
 val wiremockVersion = "3.13.2"
