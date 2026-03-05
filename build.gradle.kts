@@ -12,6 +12,7 @@ plugins {
   id("de.undercouch.download") version "5.7.0"
 }
 
+val apachePoiVersion = "5.5.1"
 val hmppsKotlinVersion = "2.0.0"
 val sentryVersion = "8.32.0"
 val springDocVersion = "3.0.1"
@@ -28,6 +29,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.data:spring-data-envers")
   implementation("io.sentry:sentry-spring-boot-4:$sentryVersion")
+  implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
   runtimeOnly("org.springframework.boot:spring-boot-starter-flyway")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")

@@ -126,7 +126,6 @@ class UploadTemplateIntTest : IntegrationTestBase() {
       ),
     )
     documentManagementApi.stubUploadDocument()
-    documentManagementApi.stubDeleteDocument(dt.externalReference)
 
     uploadTemplate(request, File(word(6)), username).expectStatus().isOk
 

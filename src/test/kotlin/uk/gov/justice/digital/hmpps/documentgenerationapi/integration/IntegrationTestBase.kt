@@ -22,9 +22,11 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.transaction.support.TransactionTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.audit.AuditRevision
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentGenerationRequestRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.Identifiable
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroupRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateVariableRepository
@@ -36,6 +38,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.H
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.util.UUID
+import kotlin.jvm.java
 
 @ExtendWith(HmppsAuthApiExtension::class, DocumentManagementExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -59,6 +62,9 @@ abstract class IntegrationTestBase {
   protected lateinit var templateGroupRepository: TemplateGroupRepository
 
   @Autowired
+  protected lateinit var docGenReqRepository: DocumentGenerationRequestRepository
+
+  @Autowired
   protected lateinit var transactionTemplate: TransactionTemplate
 
   @Autowired
@@ -75,7 +81,7 @@ abstract class IntegrationTestBase {
   }
 
   protected fun verifyAudit(
-    entity: DocumentTemplate,
+    entity: Identifiable,
     revisionType: RevisionType,
     username: String,
   ) {

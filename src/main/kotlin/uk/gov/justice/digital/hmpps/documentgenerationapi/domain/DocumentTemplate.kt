@@ -30,8 +30,8 @@ class DocumentTemplate(
   variables: Set<DocumentTemplateVariable>,
   externalReference: UUID = newUuid(),
   @Id
-  val id: UUID = newUuid(),
-) {
+  override val id: UUID = newUuid(),
+) : Identifiable {
   @Version
   var version: Int? = null
     private set
