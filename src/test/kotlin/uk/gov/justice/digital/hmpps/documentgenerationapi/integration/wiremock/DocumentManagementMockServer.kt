@@ -3,18 +3,19 @@ package uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aMultipart
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.delete
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathTemplate
 import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import org.springframework.http.MediaType
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement.DocumentManagementClient.Companion.SERVICE_NAME_KEY
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement.DocumentManagementClient.Companion.SERVICE_NAME_VALUE
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.DocumentType
+import wiremock.com.google.common.base.Predicates.equalTo
 import java.util.UUID
 
 class DocumentManagementMockServer : WireMockServer(9000) {
@@ -35,14 +36,16 @@ class DocumentManagementMockServer : WireMockServer(9000) {
     )
   }
 
-  fun stubDeleteDocument(id: UUID) {
+  fun stubDownloadDocument(documentId: UUID, byteArray: ByteArray) {
     stubFor(
-      delete(urlMatching("/documents/$id"))
+      get(urlPathTemplate("/documents/{documentId}/file"))
+        .withPathParam("documentId", equalTo(documentId.toString()))
         .withHeader(SERVICE_NAME_KEY, equalTo(SERVICE_NAME_VALUE))
         .willReturn(
           aResponse()
-            .withHeader("Content-Type", "application/json")
-            .withStatus(204),
+            .withHeader("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .withBody(byteArray)
+            .withStatus(200),
         ),
     )
   }

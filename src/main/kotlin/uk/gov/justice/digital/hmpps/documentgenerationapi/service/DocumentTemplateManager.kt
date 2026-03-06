@@ -26,7 +26,7 @@ class DocumentTemplateManager(
     val dt = existing?.update(request.code, request.name, request.description ?: "") ?: request.asDocumentTemplate()
     file?.also {
       val er = existing?.withNewExternalReference()?.externalReference ?: dt.externalReference
-      val managed = dmc.uploadDocument(request, er, it)
+      val managed = dmc.uploadTemplate(request, er, it)
       check(managed.documentUuid == er)
     }
     transactionTemplate.executeWithoutResult {

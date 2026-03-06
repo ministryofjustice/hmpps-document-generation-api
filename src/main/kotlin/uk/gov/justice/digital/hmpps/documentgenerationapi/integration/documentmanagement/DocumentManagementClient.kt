@@ -21,7 +21,7 @@ import java.util.UUID
 class DocumentManagementClient(
   @Qualifier("documentManagementWebClient") private val webClient: WebClient,
 ) {
-  fun uploadDocument(request: TemplateRequest, id: UUID, file: MultipartFile): ManagedDocument = webClient.post()
+  fun uploadTemplate(request: TemplateRequest, id: UUID, file: MultipartFile): ManagedDocument = webClient.post()
     .uri("/documents/{type}/{id}", request.type, id)
     .contentType(MULTIPART_FORM_DATA)
     .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
@@ -30,6 +30,14 @@ class DocumentManagementClient(
     .retrieve()
     .bodyToMono<ManagedDocument>()
     .retryOnTransientException()
+    .block()!!
+
+  fun downloadTemplate(id: UUID): ByteArray = webClient.get()
+    .uri("/documents/{id}/file", id)
+    .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
+    .header(USERNAME_KEY, DocumentTemplateContext.retrieve().username)
+    .retrieve()
+    .bodyToMono<ByteArray>()
     .block()!!
 
   private fun MultipartFile.generateMultipartBody(id: UUID, name: String): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
