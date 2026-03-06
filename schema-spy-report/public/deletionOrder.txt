@@ -3,6 +3,8 @@ document_template_group
 document_template_audit
 document_template_variable_audit
 document_template_group_audit
+document_generation_request_audit
+document_generation_request
 template_variable
 template_group
 document_template

@@ -118,6 +118,11 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
+                                                <td title="document_generation_request.template_id references document_template.id via fk_document_generation_request_document_template"><a href='document_generation_request.html'>document_generation_request</a><span class='relatedKey'>.template_id</span></td>
+                                                <td class="constraint detail">fk_document_generation_request_document_template</td>
+                                                <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
+                                            </tr>
+                                            <tr>
                                                 <td title="document_template_group.template_id references document_template.id via fk_document_template_group_document_template"><a href='document_template_group.html'>document_template_group</a><span class='relatedKey'>.template_id</span></td>
                                                 <td class="constraint detail">fk_document_template_group_document_template</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
