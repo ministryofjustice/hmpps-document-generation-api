@@ -80,9 +80,9 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val request = templateRequest(
       word(8),
       variables = setOf(
-        TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
-        TemplateRequest.Variable("PERSON__NAME", true),
-        TemplateRequest.Variable("PERSON__DATE_OF_BIRTH", false),
+        TemplateRequest.Variable("perPrsnNo", true),
+        TemplateRequest.Variable("perName", true),
+        TemplateRequest.Variable("perDob", false),
       ),
       groups = setOf(
         TemplateRequest.Group("EXTERNAL_MOVEMENT"),
@@ -109,8 +109,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val username = username()
     val dt = givenDocumentTemplate(
       requiredVariables = mapOf(
-        "PERSON__PRISON_NUMBER" to true,
-        "PERSON__DATE_OF_BIRTH" to false,
+        "perPrsnNo" to true,
+        "perDob" to false,
       ),
       requiredGroups = setOf("EXTERNAL_MOVEMENT"),
     )
@@ -118,8 +118,8 @@ class UploadTemplateIntTest : IntegrationTestBase() {
       id = dt.id,
       code = dt.code,
       variables = setOf(
-        TemplateRequest.Variable("PERSON__PRISON_NUMBER", true),
-        TemplateRequest.Variable("PERSON__NAME", true),
+        TemplateRequest.Variable("perPrsnNo", true),
+        TemplateRequest.Variable("perName", true),
       ),
       groups = setOf(
         TemplateRequest.Group("TEMPORARY_ABSENCE"),

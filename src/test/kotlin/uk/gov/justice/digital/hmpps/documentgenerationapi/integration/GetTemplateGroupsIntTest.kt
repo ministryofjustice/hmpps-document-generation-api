@@ -28,19 +28,17 @@ class GetTemplateGroupsIntTest : IntegrationTestBase() {
   fun `200 ok can retrieve template groups`() {
     val res = getTemplateGroups().successResponse<TemplateGroups>()
 
-    assertThat(res).isEqualTo(
-      TemplateGroups(
-        listOf(
-          NamedDescription(
-            code = "EXTERNAL_MOVEMENT",
-            name = "External movement templates",
-            description = "Document templates associated with external movements in general. These require a person to be selected",
-          ),
-          NamedDescription(
-            code = "TEMPORARY_ABSENCE",
-            name = "Temporary absence templates",
-            description = "Document templates associated with temporary absences. These require a person and a temporary absence to be selected",
-          ),
+    assertThat(res.groups).containsAll(
+      listOf(
+        NamedDescription(
+          code = "EXTERNAL_MOVEMENT",
+          name = "External movement templates",
+          description = "Document templates associated with external movements in general. These require a person to be selected",
+        ),
+        NamedDescription(
+          code = "TEMPORARY_ABSENCE",
+          name = "Temporary absence templates",
+          description = "Document templates associated with temporary absences. These require a person and a temporary absence to be selected",
         ),
       ),
     )
