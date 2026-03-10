@@ -31,10 +31,10 @@ class GetTemplateDetailIntTest : IntegrationTestBase() {
     val template = givenDocumentTemplate(
       requiredGroups = setOf("EXTERNAL_MOVEMENT", "TEMPORARY_ABSENCE"),
       requiredVariables = mapOf(
-        "PERSON__PRISON_NUMBER" to true,
-        "PRISON__CODE" to false,
-        "TEMPORARY_ABSENCE__START_DATE" to false,
-        "TEMPORARY_ABSENCE__END_DATE" to false,
+        "perPrsnNo" to true,
+        "prsnCode" to false,
+        "tapStartDate" to false,
+        "tapEndDate" to false,
       ),
     )
 
@@ -45,11 +45,11 @@ class GetTemplateDetailIntTest : IntegrationTestBase() {
     assertThat(res.variables.domains.map { it.code }).containsExactly("PRISON", "PERSON", "TEMPORARY_ABSENCE")
     res.variables.domains.forEach { domain ->
       when (domain.code) {
-        "PERSON" -> assertThat(domain.variables.single().code).isEqualTo("PERSON__PRISON_NUMBER")
-        "PRISON" -> assertThat(domain.variables.single().code).isEqualTo("PRISON__CODE")
+        "PERSON" -> assertThat(domain.variables.single().code).isEqualTo("perPrsnNo")
+        "PRISON" -> assertThat(domain.variables.single().code).isEqualTo("prsnCode")
         else -> assertThat(domain.variables.map { it.code }).containsExactly(
-          "TEMPORARY_ABSENCE__START_DATE",
-          "TEMPORARY_ABSENCE__END_DATE",
+          "tapStartDate",
+          "tapEndDate",
         )
       }
     }
