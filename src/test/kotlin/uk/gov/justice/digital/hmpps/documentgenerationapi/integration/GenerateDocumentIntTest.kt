@@ -110,7 +110,7 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
     image: ByteArray?,
   ): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
     part("data", request)
-    image?.also { part("image", it, MediaType.IMAGE_JPEG) }
+    image?.also { part("perImage", it, MediaType.IMAGE_JPEG) }
   }.build()
 
   companion object {

@@ -17,9 +17,9 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.model.GenerateFromTemp
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateDetail
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateResponse
+import uk.gov.justice.digital.hmpps.documentgenerationapi.service.DocumentGenerator
 import uk.gov.justice.digital.hmpps.documentgenerationapi.service.DocumentTemplateManager
 import uk.gov.justice.digital.hmpps.documentgenerationapi.service.RetrieveDocumentTemplate
-import uk.gov.justice.digital.hmpps.documentgenerationapi.service.TemplateGenerator
 import java.util.UUID
 
 @RestController
@@ -27,7 +27,7 @@ import java.util.UUID
 class TemplateController(
   private val templateManager: DocumentTemplateManager,
   private val retrieveTemplate: RetrieveDocumentTemplate,
-  private val generate: TemplateGenerator,
+  private val generate: DocumentGenerator,
 ) {
   @PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
   @PutMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -45,6 +45,6 @@ class TemplateController(
   fun generateDocumentFromTemplate(
     @PathVariable id: UUID,
     @Valid @RequestPart data: GenerateFromTemplate,
-    @RequestPart(required = false) image: MultipartFile?,
-  ): ResponseEntity<ByteArray> = generate.fromTemplate(id, data, image)
+    @RequestPart(required = false, name = "perImage") personImage: MultipartFile?,
+  ): ResponseEntity<ByteArray> = generate.fromTemplate(id, data, personImage)
 }
