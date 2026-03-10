@@ -8,5 +8,5 @@ document_generation_request
 template_variable
 template_group
 document_template
-audit_revision
 template_variable_domain
+audit_revision
