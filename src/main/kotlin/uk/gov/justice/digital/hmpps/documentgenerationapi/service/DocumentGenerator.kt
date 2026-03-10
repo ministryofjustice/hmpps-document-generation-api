@@ -20,8 +20,9 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentma
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.GenerateFromTemplate
 import java.io.ByteArrayOutputStream
 import java.net.URI
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.reflect.cast
 import kotlin.reflect.full.cast
 
 @Service
@@ -47,7 +48,11 @@ class DocumentGenerator(
     request: GenerateFromTemplate,
     personImage: ByteArray?,
   ): ByteArray = WordprocessingMLPackage.load(file.inputStream()).let { wp ->
-    val extraVariables = listOfNotNull(personImage?.let { PERSON_IMAGE to it }).toMap()
+    val extraVariables = listOfNotNull(
+      personImage?.let { PERSON_IMAGE to it },
+      DATE_NOW to LocalDate.now(),
+      DATE_TIME_NOW to LocalDateTime.now(),
+    ).toMap()
     wp.replaceBookmarks(request.variables + extraVariables)
     wp.contentTypeManager.addOverrideContentType(URI("/word/document.xml"), WORDPROCESSINGML_DOCUMENT)
     ByteArrayOutputStream().apply { wp.save(this) }.toByteArray()
@@ -100,6 +105,8 @@ class DocumentGenerator(
   }
 
   companion object {
+    private const val DATE_NOW = "dateNow"
+    private const val DATE_TIME_NOW = "dateTimeNow"
     private const val PERSON_IMAGE = "perImage"
     private const val IMAGE_FILENAME = "person-image"
     private const val IMAGE_MAX_WIDTH = 1800
