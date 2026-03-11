@@ -16,12 +16,12 @@ class RetrieveTemplateGroups(
   private val groupRepository: TemplateGroupRepository,
   private val templateRepository: DocumentTemplateRepository,
 ) {
-  fun all(): TemplateGroups = groupRepository.findAll().sortedBy { it.name }.map(TemplateGroup::asGroup).let { TemplateGroups(it) }
+  fun all(): TemplateGroups = groupRepository.findAll().map(TemplateGroup::asGroup).let { TemplateGroups(it) }
 
   fun templates(groupCode: String): TemplateGroupTemplates {
     val group = groupRepository.getGroup(groupCode)
     val templates = templateRepository.findByGroupCode(group.id)
-    return TemplateGroupTemplates(group.asGroup(), templates.map { it.asTemplate() }.sortedBy { it.name })
+    return TemplateGroupTemplates(group.asGroup(), templates.map { it.asTemplate() })
   }
 }
 private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description)

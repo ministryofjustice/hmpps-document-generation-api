@@ -84,7 +84,7 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
 
   private fun generationRequest(
     filename: String = word(10) + ".docx",
-    variables: Map<String, Any> = mapOf("PERSON__NAME" to "Sirius Black", "PRISON__NAME" to "Azkaban"),
+    variables: Map<String, Any> = mapOf("perName" to "Sirius Black", "prsnName" to "Azkaban"),
   ) = GenerateFromTemplate(filename, variables)
 
   private fun generateDocument(

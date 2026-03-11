@@ -37,8 +37,8 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.H
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
+import java.util.SortedSet
 import java.util.UUID
-import kotlin.jvm.java
 
 @ExtendWith(HmppsAuthApiExtension::class, DocumentManagementExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -122,7 +122,8 @@ abstract class IntegrationTestBase {
     code: String = word(8),
     name: String = word(16),
     description: String = word(20),
-  ) = TemplateGroup(code, name, description)
+    roles: SortedSet<String> = sortedSetOf(),
+  ) = TemplateGroup(code, name, description, roles)
 
   protected fun givenTemplateGroup(templateGroup: TemplateGroup) = templateGroupRepository.save(templateGroup)
 
