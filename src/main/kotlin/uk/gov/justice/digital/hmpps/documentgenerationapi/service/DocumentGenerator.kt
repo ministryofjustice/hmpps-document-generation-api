@@ -23,6 +23,7 @@ import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.full.cast
 
 @Service
@@ -59,19 +60,19 @@ class DocumentGenerator(
   }
 
   private fun WordprocessingMLPackage.replaceBookmarks(data: Map<String, Any>) {
+    val id = AtomicLong(1)
     mainDocumentPart.getAllBookmarks().forEach { bookmark ->
       if (data.containsKey(bookmark.name)) {
         val parent = bookmark.parent as? ContentAccessor ?: return@forEach
         val start = parent.content.indexOf(bookmark)
-        val end =
-          parent.content.indexOfLast { it is JAXBElement<*> && it.value is CTMarkupRange && (it.value as CTMarkupRange).id == bookmark.id }
+        val end = parent.content.indexOfLast { it is JAXBElement<*> && it.value is CTMarkupRange && (it.value as CTMarkupRange).id == bookmark.id }
 
         for (i in end - 1 downTo start + 1) {
           parent.content.removeAt(i)
         }
 
         when (val value = data[bookmark.name]) {
-          is ByteArray -> parent.content.add(start + 1, runWithImage(value))
+          is ByteArray -> parent.content.add(start + 1, runWithImage(value, id))
           else -> parent.content.add(start + 1, runWithText(value.toString()))
         }
       }
@@ -94,11 +95,11 @@ class DocumentGenerator(
     }
   }
 
-  private fun WordprocessingMLPackage.runWithImage(image: ByteArray): R = ObjectFactory().let { factory ->
+  private fun WordprocessingMLPackage.runWithImage(image: ByteArray, id: AtomicLong): R = ObjectFactory().let { factory ->
     factory.createR().also { run ->
       factory.createDrawing().apply {
         BinaryPartAbstractImage.createImagePart(this@runWithImage, image)
-          .createImageInline(IMAGE_FILENAME, IMAGE_FILENAME, 1, 2, false, IMAGE_MAX_WIDTH)
+          .createImageInline(IMAGE_FILENAME, IMAGE_FILENAME, id.getAndIncrement(), id.getAndIncrement().toInt(), false, IMAGE_MAX_WIDTH)
           .also { anchorOrInline.add(it) }
       }.also { run.content.add(it) }
     }

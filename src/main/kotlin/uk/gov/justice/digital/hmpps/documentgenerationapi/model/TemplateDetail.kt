@@ -7,6 +7,6 @@ data class TemplateDetail(
   val code: String,
   val name: String,
   val description: String,
-  val groups: List<NamedDescription>,
+  val groups: List<TemplateGroups.Group>,
   val variables: TemplateVariables,
 )

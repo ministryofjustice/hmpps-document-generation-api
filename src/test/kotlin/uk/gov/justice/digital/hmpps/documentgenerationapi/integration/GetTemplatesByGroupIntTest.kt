@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
-import uk.gov.justice.digital.hmpps.documentgenerationapi.model.NamedDescription
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroupTemplates
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroups
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateSummary
 
 class GetTemplatesByGroupIntTest : IntegrationTestBase() {
@@ -28,31 +28,23 @@ class GetTemplatesByGroupIntTest : IntegrationTestBase() {
 
   @Test
   fun `200 ok can retrieve template group without any templates`() {
-    val grp = givenTemplateGroup(templateGroup())
+    val grp = givenTemplateGroup(templateGroup(roles = sortedSetOf(word(20))))
 
     val res = getTemplateGroups(grp.code).successResponse<TemplateGroupTemplates>()
 
-    assertThat(res).isEqualTo(
-      TemplateGroupTemplates(
-        NamedDescription(grp.code, grp.name, grp.description),
-        emptyList(),
-      ),
-    )
+    assertThat(res.group).isEqualTo(TemplateGroups.Group(grp.code, grp.name, grp.description, grp.roles))
+    assertThat(res.templates).isEmpty()
   }
 
   @Test
   fun `200 ok can retrieve template group with templates`() {
-    val grp = givenTemplateGroup(templateGroup())
+    val grp = givenTemplateGroup(templateGroup(roles = sortedSetOf(word(20))))
     val template = givenDocumentTemplate(requiredGroups = setOf(grp.code))
 
     val res = getTemplateGroups(grp.code).successResponse<TemplateGroupTemplates>()
 
-    assertThat(res).isEqualTo(
-      TemplateGroupTemplates(
-        NamedDescription(grp.code, grp.name, grp.description),
-        listOf(TemplateSummary(template.id, template.code, template.name, template.description)),
-      ),
-    )
+    assertThat(res.group).isEqualTo(TemplateGroups.Group(grp.code, grp.name, grp.description, grp.roles))
+    assertThat(res.templates).containsExactly(TemplateSummary(template.id, template.code, template.name, template.description))
   }
 
   private fun getTemplateGroups(

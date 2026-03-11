@@ -4,9 +4,13 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Immutable
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import org.springframework.data.jpa.repository.JpaRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.exception.NotFoundException
+import java.lang.classfile.Attributes.code
+import java.util.SortedSet
 import java.util.UUID
 
 @Immutable
@@ -16,6 +20,8 @@ data class TemplateGroup(
   val code: String,
   val name: String,
   val description: String,
+  @JdbcTypeCode(SqlTypes.ARRAY)
+  val roles: SortedSet<String>,
   @Id
   val id: UUID = newUuid(),
 ) {
