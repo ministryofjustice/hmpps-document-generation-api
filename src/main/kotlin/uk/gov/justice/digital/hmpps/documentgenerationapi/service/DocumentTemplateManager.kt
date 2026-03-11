@@ -23,7 +23,7 @@ class DocumentTemplateManager(
   fun createOrReplace(request: TemplateRequest, file: MultipartFile?): TemplateResponse {
     val existing = request.id?.let { docTemplateRepository.findByIdOrNull(it) }
     file ?: check(existing != null) { "Attempt to create a template without a file" }
-    val dt = existing?.update(request.code, request.name, request.description ?: "") ?: request.asDocumentTemplate()
+    val dt = existing?.update(request.code, request.name, request.description ?: "", request.instructionText) ?: request.asDocumentTemplate()
     file?.also {
       val er = existing?.withNewExternalReference()?.externalReference ?: dt.externalReference
       val managed = dmc.uploadTemplate(request, er, it)
@@ -47,5 +47,5 @@ class DocumentTemplateManager(
   }
 }
 
-private fun TemplateRequest.asDocumentTemplate(): DocumentTemplate = DocumentTemplate(code, name, description ?: "", setOf())
+private fun TemplateRequest.asDocumentTemplate(): DocumentTemplate = DocumentTemplate(code, name, description ?: "", instructionText, setOf())
 private fun TemplateRequest.requiredVariables() = variables.associate { it.code to it.required }

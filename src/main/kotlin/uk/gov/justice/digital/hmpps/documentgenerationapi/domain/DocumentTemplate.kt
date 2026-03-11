@@ -27,6 +27,7 @@ class DocumentTemplate(
   code: String,
   name: String,
   description: String,
+  instructionText: String?,
   variables: Set<DocumentTemplateVariable>,
   externalReference: UUID = newUuid(),
   @Id
@@ -43,6 +44,9 @@ class DocumentTemplate(
     private set
 
   var description: String = description
+    private set
+
+  var instructionText: String? = instructionText
     private set
 
   var externalReference: UUID = externalReference
@@ -71,10 +75,11 @@ class DocumentTemplate(
     externalReference = newUuid()
   }
 
-  fun update(code: String, name: String, description: String) = apply {
+  fun update(code: String, name: String, description: String, instructionText: String?) = apply {
     this.code = code
     this.name = name
     this.description = description
+    this.instructionText = instructionText
   }
 
   fun withVariables(variables: Set<Pair<TemplateVariable, Boolean>>) = apply {

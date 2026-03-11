@@ -8,4 +8,4 @@ class TemplateGroupTemplates(val group: TemplateGroups.Group, templates: Collect
   val templates: SortedSet<TemplateSummary> = templates.toSortedSet(comparing(TemplateSummary::name))
 }
 
-data class TemplateSummary(val id: UUID, val code: String, val name: String, val description: String)
+data class TemplateSummary(val id: UUID, val code: String, val name: String, val description: String, val instructionText: String?)
