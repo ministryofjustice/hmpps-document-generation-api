@@ -3,6 +3,9 @@ package uk.gov.justice.digital.hmpps.documentgenerationapi.integration
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.envers.RevisionType
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.http.HttpEntity
 import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
@@ -41,6 +44,12 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
       username(),
       "ANY_OTHER",
     ).expectStatus().isForbidden
+  }
+
+  @ParameterizedTest
+  @MethodSource("invalidRequestProvider")
+  fun `400 bad request with invalid string data`(request: GenerateFromTemplate) {
+    generateDocument(newUuid(), request, null, username()).expectStatus().isBadRequest
   }
 
   @Test
@@ -88,11 +97,6 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
     verifyAudit(docGenRequest, RevisionType.ADD, user.username, user.caseloadId)
   }
 
-  private fun generationRequest(
-    filename: String = word(10) + ".docx",
-    variables: Map<String, Any> = mapOf("perName" to "Sirius Black", "prsnName" to "Azkaban"),
-  ) = GenerateFromTemplate(filename, variables)
-
   private fun generateDocument(
     id: UUID = newUuid(),
     request: GenerateFromTemplate = generationRequest(),
@@ -125,5 +129,19 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
 
   companion object {
     const val GENERATE_DOCUMENT_URL = "/templates/{id}/document"
+
+    private fun generationRequest(
+      filename: String = word(10) + ".docx",
+      variables: Map<String, Any> = mapOf("perName" to "Sirius Black", "prsnName" to "Azkaban"),
+    ) = GenerateFromTemplate(filename, variables)
+
+    @JvmStatic
+    private fun invalidRequestProvider() = listOf(
+      Arguments.of(generationRequest(variables = mapOf("star" to "*"))),
+      Arguments.of(generationRequest(variables = mapOf("tilde" to "~"))),
+      Arguments.of(generationRequest(variables = mapOf("gt" to ">"))),
+      Arguments.of(generationRequest(variables = mapOf("lt" to "<"))),
+      Arguments.of(generationRequest(variables = mapOf("semi" to ";"))),
+    )
   }
 }

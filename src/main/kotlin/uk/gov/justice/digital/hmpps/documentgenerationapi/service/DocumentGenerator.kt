@@ -38,6 +38,7 @@ class DocumentGenerator(
     request: GenerateFromTemplate,
     personImage: MultipartFile?,
   ): ResponseEntity<ByteArray> {
+    request.variables.validate()
     val template = templateRepository.getDocumentTemplate(id)
     dgrRepository.save(DocumentGenerationRequest(template, request))
     val input = dmc.downloadTemplate(template.externalReference)
@@ -111,5 +112,13 @@ class DocumentGenerator(
     private const val PERSON_IMAGE = "perImage"
     private const val IMAGE_FILENAME = "person-image"
     private const val IMAGE_MAX_WIDTH = 1800
+    private const val STRING_PATTERN = """^[\w\s£%=,.:"'&#@?()+\-/\\]+$"""
+    private val STRING_DATA_REGEX = STRING_PATTERN.toRegex()
+
+    private fun Map<String, Any>.validate() {
+      values.forEach {
+        check(it !is String || it.isEmpty() || it.matches(STRING_DATA_REGEX)) { "Invalid data for a template" }
+      }
+    }
   }
 }
