@@ -43,7 +43,7 @@
 <g id="node2" class="node">
 <title>document_template</title>
 <g id="a_node2"><a xlink:href="../../tables/document_template.html" xlink:title="document_template" target="_top">
-<polygon fill="#ffffff" stroke="transparent" points="274,-96.7 274,-274.7 527,-274.7 527,-96.7 274,-96.7"/>
+<polygon fill="#ffffff" stroke="transparent" points="274,-74.7 274,-274.7 527,-274.7 527,-74.7 274,-74.7"/>
 <polygon fill="#f5f5f5" stroke="transparent" points="276.5,-249.7 276.5,-272.7 525.5,-272.7 525.5,-249.7 276.5,-249.7"/>
 <polygon fill="none" stroke="#000000" points="276.5,-249.7 276.5,-272.7 525.5,-272.7 525.5,-249.7 276.5,-249.7"/>
 <text text-anchor="start" x="281.5" y="-258.3" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#000000">document_template</text>
@@ -76,16 +76,20 @@
 <text text-anchor="start" x="296.5" y="-124.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">external_reference</text>
 <polygon fill="none" stroke="#000000" points="431.5,-117.7 431.5,-139.7 525.5,-139.7 525.5,-117.7 431.5,-117.7"/>
 <text text-anchor="start" x="434.4758" y="-125.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">uuid[2147483647]</text>
-<polygon fill="#ffffff" stroke="transparent" points="276.5,-98.7 276.5,-117.7 358.5,-117.7 358.5,-98.7 276.5,-98.7"/>
-<polygon fill="none" stroke="#000000" points="276.5,-98.7 276.5,-117.7 358.5,-117.7 358.5,-98.7 276.5,-98.7"/>
-<text text-anchor="start" x="279.5" y="-104.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">&lt; 1</text>
-<polygon fill="#ffffff" stroke="transparent" points="358.5,-98.7 358.5,-117.7 431.5,-117.7 431.5,-98.7 358.5,-98.7"/>
-<polygon fill="none" stroke="#000000" points="358.5,-98.7 358.5,-117.7 431.5,-117.7 431.5,-98.7 358.5,-98.7"/>
-<text text-anchor="start" x="422.3862" y="-104.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
-<polygon fill="#ffffff" stroke="transparent" points="431.5,-98.7 431.5,-117.7 525.5,-117.7 525.5,-98.7 431.5,-98.7"/>
-<polygon fill="none" stroke="#000000" points="431.5,-98.7 431.5,-117.7 525.5,-117.7 525.5,-98.7 431.5,-98.7"/>
-<text text-anchor="start" x="506.9053" y="-104.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">3 &gt;</text>
-<polygon fill="none" stroke="#000000" stroke-width="2" points="275,-97.7 275,-273.7 526,-273.7 526,-97.7 275,-97.7"/>
+<polygon fill="none" stroke="#000000" points="276.5,-95.7 276.5,-117.7 431.5,-117.7 431.5,-95.7 276.5,-95.7"/>
+<text text-anchor="start" x="296.5" y="-102.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">instruction_text</text>
+<polygon fill="none" stroke="#000000" points="431.5,-95.7 431.5,-117.7 525.5,-117.7 525.5,-95.7 431.5,-95.7"/>
+<text text-anchor="start" x="434.5" y="-103.4" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">text[2147483647]</text>
+<polygon fill="#ffffff" stroke="transparent" points="276.5,-76.7 276.5,-95.7 358.5,-95.7 358.5,-76.7 276.5,-76.7"/>
+<polygon fill="none" stroke="#000000" points="276.5,-76.7 276.5,-95.7 358.5,-95.7 358.5,-76.7 276.5,-76.7"/>
+<text text-anchor="start" x="279.5" y="-82.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">&lt; 1</text>
+<polygon fill="#ffffff" stroke="transparent" points="358.5,-76.7 358.5,-95.7 431.5,-95.7 431.5,-76.7 358.5,-76.7"/>
+<polygon fill="none" stroke="#000000" points="358.5,-76.7 358.5,-95.7 431.5,-95.7 431.5,-76.7 358.5,-76.7"/>
+<text text-anchor="start" x="422.3862" y="-82.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000"> &#160;</text>
+<polygon fill="#ffffff" stroke="transparent" points="431.5,-76.7 431.5,-95.7 525.5,-95.7 525.5,-76.7 431.5,-76.7"/>
+<polygon fill="none" stroke="#000000" points="431.5,-76.7 431.5,-95.7 525.5,-95.7 525.5,-76.7 431.5,-76.7"/>
+<text text-anchor="start" x="506.9053" y="-82.8" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#000000">3 &gt;</text>
+<polygon fill="none" stroke="#000000" stroke-width="2" points="275,-75.7 275,-273.7 526,-273.7 526,-75.7 275,-75.7"/>
 </a>
 </g>
 </g>
