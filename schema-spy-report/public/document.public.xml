@@ -176,6 +176,7 @@
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="name" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="roles" nullable="false" remarks="" size="2147483647" type="_text" typeCode="2003"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="pk_template_group" unique="true">
             <column ascending="true" name="id"/>
