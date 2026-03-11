@@ -14,8 +14,9 @@ import java.time.Duration
 class WebClientConfiguration(
   @Value($$"${integration.hmpps-auth.url}") private val hmppsAuthBaseUri: String,
   @Value($$"${integration.document-management.url}") private val documentManagementBaseUri: String,
-  @Value("\${api.health-timeout:1s}") val healthTimeout: Duration,
-  @Value("\${api.timeout:1s}") val timeout: Duration,
+  @Value($$"${integration.manage-users.url}") private val manageUsersBaseUri: String,
+  @Value($$"${api.health-timeout:1s}") val healthTimeout: Duration,
+  @Value($$"${api.timeout:1s}") val timeout: Duration,
 ) {
   // HMPPS Auth health ping is required if your service calls HMPPS Auth to get a token to call other services
   @Bean
@@ -25,7 +26,13 @@ class WebClientConfiguration(
   fun documentManagementHealthWebClient(builder: Builder): WebClient = builder.healthWebClient(documentManagementBaseUri, healthTimeout)
 
   @Bean
+  fun manageUsersHealthWebClient(builder: Builder): WebClient = builder.healthWebClient(manageUsersBaseUri, healthTimeout)
+
+  @Bean
   fun documentManagementWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(authorizedClientManager, DEFAULT_REGISTRATION_ID, documentManagementBaseUri, timeout)
+
+  @Bean
+  fun manageUsersWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(authorizedClientManager, DEFAULT_REGISTRATION_ID, manageUsersBaseUri, timeout)
 
   companion object {
     const val DEFAULT_REGISTRATION_ID = "default"

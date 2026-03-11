@@ -9,10 +9,13 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.CaseloadIdHeader
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.ManageUsersExtension.Companion.manageUsers
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.ManageUsersServer.Companion.user
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.GenerateFromTemplate
 import java.io.File
 import java.util.UUID
@@ -48,17 +51,19 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
 
     val request = generationRequest()
     val username = username()
+    val caseloadId = word(3)
     generateDocument(
       template.id,
       request,
       File("src/test/resources/image.jpg").readBytes(),
       username,
+      caseloadId = caseloadId,
     ).expectStatus().isOk
 
     val docGenRequest = docGenReqRepository.findAll().first { it.template.id == template.id }
     assertThat(docGenRequest.request).isEqualTo(request)
 
-    verifyAudit(docGenRequest, RevisionType.ADD, username)
+    verifyAudit(docGenRequest, RevisionType.ADD, username, caseloadId)
   }
 
   @Test
@@ -68,18 +73,19 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
     documentManagementApi.stubDownloadDocument(template.externalReference, docTemplate.readBytes())
 
     val request = generationRequest()
-    val username = username()
+    val user = user(username(), caseloadId = word(3))
+    manageUsers.stubFindUser(user.username, user)
     generateDocument(
       template.id,
       request,
       null,
-      username,
+      user.username,
     ).expectStatus().isOk
 
     val docGenRequest = docGenReqRepository.findAll().first { it.template.id == template.id }
     assertThat(docGenRequest.request).isEqualTo(request)
 
-    verifyAudit(docGenRequest, RevisionType.ADD, username)
+    verifyAudit(docGenRequest, RevisionType.ADD, user.username, user.caseloadId)
   }
 
   private fun generationRequest(
@@ -97,12 +103,16 @@ class GenerateDocumentIntTest : IntegrationTestBase() {
       Roles.DOCUMENT_GENERATION_RO,
       Roles.DOCUMENT_GENERATION_RW,
     ).random(),
+    caseloadId: String? = null,
   ) = webTestClient
     .post()
     .uri(GENERATE_DOCUMENT_URL, id)
     .contentType(MediaType.MULTIPART_FORM_DATA)
     .body(BodyInserters.fromMultipartData(generateMultipartBody(request, image)))
     .headers(setAuthorisation(username = username, roles = listOfNotNull(role)))
+    .headers { headers ->
+      caseloadId?.also { headers.put(CaseloadIdHeader.NAME, listOf(it)) }
+    }
     .exchange()
 
   private fun generateMultipartBody(

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.config
 
+import io.opentelemetry.api.trace.Span
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ValidationException
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.applies
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.manageusers.ManageUsersClient
 
 @Configuration
 class DocumentTemplateContextConfiguration(private val contextInterceptor: DocumentTemplateContextInterceptor) : WebMvcConfigurer {
@@ -30,13 +32,19 @@ class DocumentTemplateContextConfiguration(private val contextInterceptor: Docum
 }
 
 @Configuration
-class DocumentTemplateContextInterceptor : HandlerInterceptor {
+class DocumentTemplateContextInterceptor(
+  private val manageUsers: ManageUsersClient,
+) : HandlerInterceptor {
   override fun preHandle(
     request: HttpServletRequest,
     response: HttpServletResponse,
     handler: Any,
   ): Boolean {
-    DocumentTemplateContext(getUsername()).applies()
+    val username = getUsername()
+    val caseloadId = request.getHeader(CaseloadIdHeader.NAME)?.also {
+      Span.current().setAttribute(CaseloadIdHeader.NAME, it)
+    } ?: manageUsers.getUserDetailsOrNull(username)?.caseloadId
+    DocumentTemplateContext(username, caseloadId = caseloadId).applies()
     return true
   }
 

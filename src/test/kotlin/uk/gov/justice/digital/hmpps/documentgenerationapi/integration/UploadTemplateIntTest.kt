@@ -10,11 +10,14 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.CaseloadIdHeader
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateVariable
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.username
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.DataGenerator.word
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.ManageUsersExtension.Companion.manageUsers
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.ManageUsersServer.Companion.user
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateResponse
 import java.io.File
@@ -77,6 +80,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
   @Test
   fun `200 ok when uploading a new document`() {
     val username = username()
+    val caseloadId = word(3)
     val request = templateRequest(
       word(8),
       variables = setOf(
@@ -90,7 +94,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     )
     documentManagementApi.stubUploadDocument()
 
-    val res = uploadTemplate(request, File(word(6)), username).successResponse<TemplateResponse>()
+    val res = uploadTemplate(request, File(word(6)), username, caseloadId = caseloadId).successResponse<TemplateResponse>()
 
     val saved = requireNotNull(findDocumentTemplate(res.id))
     assertThat(saved.name).isEqualTo(request.name)
@@ -101,12 +105,13 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     assertThat(saved.groups()).hasSize(1)
     saved.groups().forEach { it.verifyAgainst(request) }
 
-    verifyAudit(saved, RevisionType.ADD, username)
+    verifyAudit(saved, RevisionType.ADD, username, caseloadId)
   }
 
   @Test
   fun `200 ok when replacing an existing document`() {
-    val username = username()
+    val user = user(username(), caseloadId = word(3))
+    manageUsers.stubFindUser(user.username, user)
     val dt = givenDocumentTemplate(
       requiredVariables = mapOf(
         "perPrsnNo" to true,
@@ -127,7 +132,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     )
     documentManagementApi.stubUploadDocument()
 
-    uploadTemplate(request, File(word(6)), username).expectStatus().isOk
+    uploadTemplate(request, File(word(6)), user.username).expectStatus().isOk
 
     val saved = requireNotNull(findDocumentTemplate(dt.id))
     assertThat(saved.name).isEqualTo(request.name)
@@ -138,7 +143,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     assertThat(saved.groups()).hasSize(1)
     saved.groups().forEach { it.verifyAgainst(request) }
 
-    verifyAudit(saved, RevisionType.MOD, username)
+    verifyAudit(saved, RevisionType.MOD, user.username, user.caseloadId)
   }
 
   private fun templateRequest(
@@ -155,12 +160,16 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     file: File? = null,
     username: String = username(),
     role: String? = Roles.DOCUMENT_GENERATION_UI,
+    caseloadId: String? = null,
   ) = webTestClient
     .put()
     .uri(UPLOAD_TEMPLATE_URL, request.code)
     .contentType(MediaType.MULTIPART_FORM_DATA)
     .body(BodyInserters.fromMultipartData(generateMultipartBody(request, file)))
     .headers(setAuthorisation(username = username, roles = listOfNotNull(role)))
+    .headers { headers ->
+      caseloadId?.also { headers.put(CaseloadIdHeader.NAME, listOf(it)) }
+    }
     .exchange()
 
   private fun generateMultipartBody(request: TemplateRequest, file: File?): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {

@@ -28,6 +28,8 @@ class AuditRevision {
   var timestamp: LocalDateTime? = null
 
   var username: String? = null
+
+  var caseloadId: String? = null
 }
 
 class AuditRevisionEntityListener : RevisionListener {
@@ -36,6 +38,7 @@ class AuditRevisionEntityListener : RevisionListener {
       val context = DocumentTemplateContext.retrieve()
       timestamp = context.requestAt
       username = context.username
+      caseloadId = context.caseloadId
     }
   }
 }

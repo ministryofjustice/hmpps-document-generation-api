@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 data class DocumentTemplateContext(
   val username: String,
   val requestAt: LocalDateTime = LocalDateTime.now(),
+  val caseloadId: String? = null,
 ) {
   companion object {
     const val SYSTEM_USERNAME = "SYS"

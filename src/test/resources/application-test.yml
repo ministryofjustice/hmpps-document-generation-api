@@ -10,6 +10,8 @@ integration:
     url: "http://localhost:8090/auth"
   document-management:
     url: "http://localhost:9000"
+  manage-users:
+    url: "http://localhost:8095"
 
 spring:
   jpa:
