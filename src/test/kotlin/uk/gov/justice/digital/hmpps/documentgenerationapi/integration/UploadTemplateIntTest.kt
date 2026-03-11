@@ -83,6 +83,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val caseloadId = word(3)
     val request = templateRequest(
       word(8),
+      instructionText = "Some instructions for the template",
       variables = setOf(
         TemplateRequest.Variable("perPrsnNo", true),
         TemplateRequest.Variable("perName", true),
@@ -94,11 +95,13 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     )
     documentManagementApi.stubUploadDocument()
 
-    val res = uploadTemplate(request, File(word(6)), username, caseloadId = caseloadId).successResponse<TemplateResponse>()
+    val res =
+      uploadTemplate(request, File(word(6)), username, caseloadId = caseloadId).successResponse<TemplateResponse>()
 
     val saved = requireNotNull(findDocumentTemplate(res.id))
     assertThat(saved.name).isEqualTo(request.name)
     assertThat(saved.description).isEqualTo(request.description)
+    assertThat(saved.instructionText).isEqualTo(request.instructionText)
     assertThat(saved.externalReference).isNotNull
     assertThat(saved.variables()).hasSize(3)
     saved.variables().forEach { it.verifyAgainst(request) }
@@ -122,6 +125,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val request = templateRequest(
       id = dt.id,
       code = dt.code,
+      instructionText = "Some updated instructions for the template",
       variables = setOf(
         TemplateRequest.Variable("perPrsnNo", true),
         TemplateRequest.Variable("perName", true),
@@ -138,6 +142,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     assertThat(saved.name).isEqualTo(request.name)
     assertThat(saved.description).isEqualTo(request.description)
     assertThat(saved.externalReference).isNotEqualTo(dt.externalReference)
+    assertThat(saved.instructionText).isEqualTo(request.instructionText)
     assertThat(saved.variables()).hasSize(2)
     saved.variables().forEach { it.verifyAgainst(request) }
     assertThat(saved.groups()).hasSize(1)
@@ -150,10 +155,11 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     code: String,
     name: String = "Name of $code",
     description: String = "Description of $code : $name",
+    instructionText: String? = null,
     variables: Set<TemplateRequest.Variable> = setOf(),
     groups: Set<TemplateRequest.Group> = setOf(),
     id: UUID? = null,
-  ) = TemplateRequest(id, code, name, description, variables, groups)
+  ) = TemplateRequest(id, code, name, description, instructionText, variables, groups)
 
   private fun uploadTemplate(
     request: TemplateRequest,

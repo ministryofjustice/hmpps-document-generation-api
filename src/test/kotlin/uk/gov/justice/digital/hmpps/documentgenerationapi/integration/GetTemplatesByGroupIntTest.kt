@@ -44,7 +44,7 @@ class GetTemplatesByGroupIntTest : IntegrationTestBase() {
     val res = getTemplateGroups(grp.code).successResponse<TemplateGroupTemplates>()
 
     assertThat(res.group).isEqualTo(TemplateGroups.Group(grp.code, grp.name, grp.description, grp.roles))
-    assertThat(res.templates).containsExactly(TemplateSummary(template.id, template.code, template.name, template.description))
+    assertThat(res.templates).containsExactly(TemplateSummary(template.id, template.code, template.name, template.description, template.instructionText))
   }
 
   private fun getTemplateGroups(

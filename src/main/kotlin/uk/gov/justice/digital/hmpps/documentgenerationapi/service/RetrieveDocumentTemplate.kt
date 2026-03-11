@@ -32,6 +32,7 @@ private fun DocumentTemplate.detail(domainProvider: (String) -> TemplateVariable
   code,
   name,
   description,
+  instructionText,
   groups().detail(),
   variables().detail(domainProvider),
 )

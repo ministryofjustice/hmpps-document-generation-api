@@ -60,6 +60,7 @@ class GetTemplateDetailIntTest : IntegrationTestBase() {
     assertThat(code).isEqualTo(template.code)
     assertThat(name).isEqualTo(template.name)
     assertThat(description).isEqualTo(template.description)
+    assertThat(instructionText).isEqualTo(template.instructionText)
   }
 
   private fun getTemplate(

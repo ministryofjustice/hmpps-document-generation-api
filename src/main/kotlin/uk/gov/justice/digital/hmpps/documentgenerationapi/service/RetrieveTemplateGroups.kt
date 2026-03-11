@@ -24,4 +24,4 @@ class RetrieveTemplateGroups(
     return TemplateGroupTemplates(group.asGroup(), templates.map { it.asTemplate() })
   }
 }
-private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description)
+private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description, instructionText)

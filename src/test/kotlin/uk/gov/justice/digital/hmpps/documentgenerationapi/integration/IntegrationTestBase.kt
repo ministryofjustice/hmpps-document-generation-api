@@ -134,9 +134,10 @@ abstract class IntegrationTestBase {
     code: String = word(16),
     name: String = "Name of $code",
     description: String = "Description of $code => $name",
+    instructionText: String? = "An instruction for the template",
     externalReference: UUID = newUuid(),
     id: UUID = newUuid(),
-  ): DocumentTemplate = DocumentTemplate(code, name, description, setOf(), externalReference, id)
+  ): DocumentTemplate = DocumentTemplate(code, name, description, instructionText, setOf(), externalReference, id)
 
   protected fun givenDocumentTemplate(
     docTemplate: DocumentTemplate = documentTemplate(),

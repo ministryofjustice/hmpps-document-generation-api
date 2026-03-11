@@ -8,11 +8,12 @@ import java.util.UUID
 
 data class TemplateRequest(
   val id: UUID?,
-  @Pattern(regexp = "[A-Za-z0-9_]+", message = "Only alphanumeric characters and underscores are permitted")
+  @Pattern(regexp = "\\w+", message = "Only alphanumeric characters and underscores are permitted")
   val code: String,
   @NotBlank
   val name: String,
   val description: String?,
+  val instructionText: String?,
   val variables: Set<Variable> = emptySet(),
   val groups: Set<Group> = emptySet(),
 ) {
