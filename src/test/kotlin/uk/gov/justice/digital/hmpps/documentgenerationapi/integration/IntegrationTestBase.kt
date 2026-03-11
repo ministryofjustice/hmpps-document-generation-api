@@ -35,12 +35,13 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.container.
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.HmppsAuthApiExtension.Companion.hmppsAuth
+import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.ManageUsersExtension
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.util.SortedSet
 import java.util.UUID
 
-@ExtendWith(HmppsAuthApiExtension::class, DocumentManagementExtension::class)
+@ExtendWith(HmppsAuthApiExtension::class, DocumentManagementExtension::class, ManageUsersExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
@@ -84,6 +85,7 @@ abstract class IntegrationTestBase {
     entity: Identifiable,
     revisionType: RevisionType,
     username: String,
+    caseloadId: String? = null,
   ) {
     transactionTemplate.execute {
       val auditReader = AuditReaderFactory.get(entityManager)
@@ -107,6 +109,7 @@ abstract class IntegrationTestBase {
 
       val auditRevision = entityRevision[1] as AuditRevision
       assertThat(auditRevision.username).isEqualTo(username)
+      assertThat(auditRevision.caseloadId).isEqualTo(caseloadId)
     }
   }
 

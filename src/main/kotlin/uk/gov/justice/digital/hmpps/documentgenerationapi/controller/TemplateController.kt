@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.CaseloadIdHeader
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.GenerateFromTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateDetail
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
@@ -29,6 +30,7 @@ class TemplateController(
   private val retrieveTemplate: RetrieveDocumentTemplate,
   private val generate: DocumentGenerator,
 ) {
+  @CaseloadIdHeader
   @PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")
   @PutMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
   fun createOrReplaceTemplate(
@@ -40,6 +42,7 @@ class TemplateController(
   @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun getTemplate(@PathVariable id: UUID): TemplateDetail = retrieveTemplate.byId(id)
 
+  @CaseloadIdHeader
   @PreAuthorize("hasAnyRole('${Roles.DOCUMENT_GENERATION_UI}', '${Roles.DOCUMENT_GENERATION_RO}', '${Roles.DOCUMENT_GENERATION_RW}')")
   @PostMapping("/{id}/document", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
   fun generateDocumentFromTemplate(

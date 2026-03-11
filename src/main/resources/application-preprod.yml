@@ -3,3 +3,5 @@ integration:
     url: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
   document-management:
     url: "https://document-api-preprod.hmpps.service.justice.gov.uk"
+  manage-users:
+    url: "https://manage-users-api-preprod.hmpps.service.justice.gov.uk"
