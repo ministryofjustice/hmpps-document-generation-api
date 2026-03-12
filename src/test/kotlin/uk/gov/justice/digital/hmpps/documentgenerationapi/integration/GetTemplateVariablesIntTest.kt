@@ -67,7 +67,12 @@ class GetTemplateVariablesIntTest : IntegrationTestBase() {
               TemplateVariables.Variable(
                 code = "sentEarliestCrtApp",
                 description = "Earliest court appearance",
-                type = Type.STRING,
+                type = Type.DATE,
+              ),
+              TemplateVariables.Variable(
+                code = "sentDate",
+                description = "Date of sentence",
+                type = Type.DATE,
               ),
               TemplateVariables.Variable(
                 code = "sentLenYears",
