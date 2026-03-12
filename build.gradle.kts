@@ -49,6 +49,10 @@ kotlin {
   jvmToolchain(25)
 }
 
+dependencyCheck {
+  suppressionFiles.add("$rootDir/extra-suppressions.xml")
+}
+
 tasks {
   withType<KotlinCompile> {
     compilerOptions {
