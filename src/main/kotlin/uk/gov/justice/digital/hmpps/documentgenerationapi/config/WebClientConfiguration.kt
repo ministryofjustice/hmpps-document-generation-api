@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.config
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
@@ -15,6 +16,7 @@ class WebClientConfiguration(
   @Value($$"${integration.hmpps-auth.url}") private val hmppsAuthBaseUri: String,
   @Value($$"${integration.document-management.url}") private val documentManagementBaseUri: String,
   @Value($$"${integration.manage-users.url}") private val manageUsersBaseUri: String,
+  @Value($$"${integration.template-configuration.url:}") private val templateConfigurationBaseUri: String,
   @Value($$"${api.health-timeout:1s}") val healthTimeout: Duration,
   @Value($$"${api.timeout:1s}") val timeout: Duration,
 ) {
@@ -33,6 +35,10 @@ class WebClientConfiguration(
 
   @Bean
   fun manageUsersWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(authorizedClientManager, DEFAULT_REGISTRATION_ID, manageUsersBaseUri, timeout)
+
+  @Bean
+  @ConditionalOnBooleanProperty("service.auto-configure-templates")
+  fun templateConfigurationWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(authorizedClientManager, "template-config", templateConfigurationBaseUri, timeout)
 
   companion object {
     const val DEFAULT_REGISTRATION_ID = "default"

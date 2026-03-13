@@ -1,7 +1,14 @@
 integration:
   hmpps-auth:
     url: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
+  tc-auth:
+    url: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
   document-management:
     url: "https://document-api-preprod.hmpps.service.justice.gov.uk"
   manage-users:
     url: "https://manage-users-api-preprod.hmpps.service.justice.gov.uk"
+
+service:
+  auto-configure-templates: true
+  include-templates:
+    - TAP_ROTL_LIC1

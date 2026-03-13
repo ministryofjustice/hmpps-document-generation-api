@@ -26,7 +26,7 @@ class DocumentTemplateManager(
     val dt = existing?.update(request.code, request.name, request.description ?: "", request.instructionText) ?: request.asDocumentTemplate()
     file?.also {
       val er = existing?.withNewExternalReference()?.externalReference ?: dt.externalReference
-      val managed = dmc.uploadTemplate(request, er, it)
+      val managed = dmc.uploadTemplate(request.type, request.name, er, it.bytes, it.contentType)
       check(managed.documentUuid == er)
     }
     transactionTemplate.executeWithoutResult {
@@ -47,5 +47,5 @@ class DocumentTemplateManager(
   }
 }
 
-private fun TemplateRequest.asDocumentTemplate(): DocumentTemplate = DocumentTemplate(code, name, description ?: "", instructionText, setOf())
+private fun TemplateRequest.asDocumentTemplate(): DocumentTemplate = DocumentTemplate(code, name, description ?: "", instructionText)
 private fun TemplateRequest.requiredVariables() = variables.associate { it.code to it.required }

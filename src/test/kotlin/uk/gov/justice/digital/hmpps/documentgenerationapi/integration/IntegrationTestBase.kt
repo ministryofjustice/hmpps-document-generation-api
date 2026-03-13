@@ -137,7 +137,7 @@ abstract class IntegrationTestBase {
     instructionText: String? = "An instruction for the template",
     externalReference: UUID = newUuid(),
     id: UUID = newUuid(),
-  ): DocumentTemplate = DocumentTemplate(code, name, description, instructionText, setOf(), externalReference, id)
+  ): DocumentTemplate = DocumentTemplate(code, name, description, instructionText, externalReference, id)
 
   protected fun givenDocumentTemplate(
     docTemplate: DocumentTemplate = documentTemplate(),
