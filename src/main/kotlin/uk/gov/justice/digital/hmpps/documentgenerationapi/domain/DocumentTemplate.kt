@@ -28,7 +28,6 @@ class DocumentTemplate(
   name: String,
   description: String,
   instructionText: String?,
-  variables: Set<DocumentTemplateVariable>,
   externalReference: UUID = newUuid(),
   @Id
   override val id: UUID = newUuid(),
@@ -67,12 +66,12 @@ class DocumentTemplate(
   private var groups: MutableSet<TemplateGroup> = mutableSetOf()
   fun groups(): Set<TemplateGroup> = unmodifiableSet(groups)
 
-  init {
-    this.variables.addAll(variables)
-  }
-
   fun withNewExternalReference() = apply {
     externalReference = newUuid()
+  }
+
+  fun withExternalReference(externalReference: UUID) = apply {
+    this.externalReference = externalReference
   }
 
   fun update(code: String, name: String, description: String, instructionText: String?) = apply {
@@ -100,6 +99,15 @@ class DocumentTemplate(
 interface DocumentTemplateRepository : JpaRepository<DocumentTemplate, UUID> {
   @Query("select tmp from DocumentTemplate tmp join tmp.groups grp where grp.id = :groupId")
   fun findByGroupCode(groupId: UUID): List<DocumentTemplate>
+
+  fun findByCode(code: String): DocumentTemplate?
+
+  fun findByCodeNotIn(code: Set<String>): List<DocumentTemplate>
+
+  @Query("""select dt.externalReference from DocumentTemplate dt where dt.code = :code""")
+  fun findExternalReferenceFromCode(code: String): UUID?
 }
 
 fun DocumentTemplateRepository.getDocumentTemplate(id: UUID) = findByIdOrNull(id) ?: throw NotFoundException(DocumentTemplate::class, id)
+
+fun DocumentTemplateRepository.getByCode(code: String) = findByCode(code) ?: throw NotFoundException(DocumentTemplate::class, code)

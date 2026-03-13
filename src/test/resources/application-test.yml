@@ -8,10 +8,14 @@ management.endpoint:
 integration:
   hmpps-auth:
     url: "http://localhost:8090/auth"
+  tc-auth:
+    url: "http://localhost:8090/auth"
   document-management:
     url: "http://localhost:9000"
   manage-users:
     url: "http://localhost:8095"
+  template-configuration:
+    url: "http://localhost:7979"
 
 spring:
   jpa:
@@ -30,11 +34,21 @@ springdoc:
     enabled: true
 
 client:
-  id: external-movements
-  secret: external-movements
+  id: document-generation
+  secret: document-generation
+
+tc.client:
+  id: template-config
+  secret: template-config
 
 db:
   server: "localhost:5432"
   name: "document"
   user: "generate"
   pass: "t3mp14t3s"
+
+service:
+  allow-pulling-templates: true
+  auto-pull-templates: false
+  include-templates:
+    - TEST_TEMPLATE_1

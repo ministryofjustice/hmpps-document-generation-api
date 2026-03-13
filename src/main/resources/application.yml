@@ -57,10 +57,19 @@ spring:
             client-id: ${client.id}
             client-secret: ${client.secret}
             authorization-grant-type: client_credentials
+            scope: write
+          template-config:
+            provider: tc-auth
+            client-id: ${tc.client.id}
+            client-secret: ${tc.client.secret}
+            authorization-grant-type: client_credentials
             scope: read
         provider:
           hmpps-auth:
             token-uri: ${integration.hmpps-auth.url}/oauth/token
+          tc-auth:
+            token-uri: ${integration.tc-auth.url}/oauth/token
+
   servlet:
     multipart:
       max-file-size: 1MB
@@ -119,3 +128,7 @@ logging:
   level:
     org.springframework: INFO
     uk.gov.justice.digital: DEBUG
+
+service:
+  allow-pulling-templates: false
+  auto-pull-templates: false

@@ -41,7 +41,11 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.util.SortedSet
 import java.util.UUID
 
-@ExtendWith(HmppsAuthApiExtension::class, DocumentManagementExtension::class, ManageUsersExtension::class)
+@ExtendWith(
+  HmppsAuthApiExtension::class,
+  DocumentManagementExtension::class,
+  ManageUsersExtension::class,
+)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
@@ -137,7 +141,7 @@ abstract class IntegrationTestBase {
     instructionText: String? = "An instruction for the template",
     externalReference: UUID = newUuid(),
     id: UUID = newUuid(),
-  ): DocumentTemplate = DocumentTemplate(code, name, description, instructionText, setOf(), externalReference, id)
+  ): DocumentTemplate = DocumentTemplate(code, name, description, instructionText, externalReference, id)
 
   protected fun givenDocumentTemplate(
     docTemplate: DocumentTemplate = documentTemplate(),
