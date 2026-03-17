@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.model
 
+import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateVariable
 import java.util.Comparator.comparing
 import java.util.SortedSet
 import java.util.UUID
@@ -8,4 +9,4 @@ class TemplateGroupTemplates(val group: TemplateGroups.Group, templates: Collect
   val templates: SortedSet<TemplateSummary> = templates.toSortedSet(comparing(TemplateSummary::name))
 }
 
-data class TemplateSummary(val id: UUID, val code: String, val name: String, val description: String, val instructionText: String?)
+data class TemplateSummary(val id: UUID, val code: String, val name: String, val description: String, val instructionText: String?, val variableDomains: List<String>)
