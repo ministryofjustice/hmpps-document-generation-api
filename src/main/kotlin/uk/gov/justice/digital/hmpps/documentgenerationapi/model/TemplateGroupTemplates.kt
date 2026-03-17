@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.model
 
-import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateVariable
 import java.util.Comparator.comparing
 import java.util.SortedSet
 import java.util.UUID
