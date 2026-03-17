@@ -46,6 +46,9 @@ generic-service:
       DB_NAME: "database_name"
       DB_USER: "database_username"
       DB_PASS: "database_password"
+    template-configuration-api:
+      TC_CLIENT_ID: "SYSTEM_CLIENT_ID"
+      TC_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
 
   allowlist:
     groups:

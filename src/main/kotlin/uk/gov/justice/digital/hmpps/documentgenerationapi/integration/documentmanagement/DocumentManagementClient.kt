@@ -7,26 +7,25 @@ import org.springframework.http.MediaType.MULTIPART_FORM_DATA
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.util.MultiValueMap
-import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import tools.jackson.databind.node.JsonNodeFactory
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.retryOnTransientException
-import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
+import uk.gov.justice.digital.hmpps.documentgenerationapi.model.DocumentType
 import java.util.UUID
 
 @Component
 class DocumentManagementClient(
   @Qualifier("documentManagementWebClient") private val webClient: WebClient,
 ) {
-  fun uploadTemplate(request: TemplateRequest, id: UUID, file: MultipartFile): ManagedDocument = webClient.post()
-    .uri("/documents/{type}/{id}", request.type, id)
+  fun uploadTemplate(type: DocumentType, name: String, id: UUID, file: ByteArray, contentType: String?): ManagedDocument = webClient.post()
+    .uri("/documents/{type}/{id}", type, id)
     .contentType(MULTIPART_FORM_DATA)
     .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
     .header(USERNAME_KEY, DocumentTemplateContext.retrieve().username)
-    .body(BodyInserters.fromMultipartData(file.generateMultipartBody(id, request.name)))
+    .body(BodyInserters.fromMultipartData(file.generateMultipartBody(id, name, contentType)))
     .retrieve()
     .bodyToMono<ManagedDocument>()
     .retryOnTransientException()
@@ -38,13 +37,18 @@ class DocumentManagementClient(
     .header(USERNAME_KEY, DocumentTemplateContext.retrieve().username)
     .retrieve()
     .bodyToMono<ByteArray>()
+    .retryOnTransientException()
     .block()!!
 
-  private fun MultipartFile.generateMultipartBody(id: UUID, name: String): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
+  private fun ByteArray.generateMultipartBody(
+    id: UUID,
+    name: String,
+    contentType: String?,
+  ): MultiValueMap<String, HttpEntity<*>> = MultipartBodyBuilder().apply {
     part(
       "file",
-      this@generateMultipartBody.resource,
-      MediaType.valueOf(this@generateMultipartBody.contentType?.trim().takeUnless { it.isNullOrEmpty() } ?: "application/octet-stream"),
+      this@generateMultipartBody,
+      MediaType.valueOf(contentType?.trim().takeUnless { it.isNullOrEmpty() } ?: "application/octet-stream"),
     ).filename(id.toString())
     part(
       "metadata",
