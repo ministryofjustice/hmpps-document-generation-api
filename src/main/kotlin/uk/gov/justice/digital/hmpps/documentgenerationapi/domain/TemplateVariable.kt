@@ -25,6 +25,7 @@ data class TemplateVariable(
   enum class Type {
     BINARY,
     DATE,
+    NUMBER,
     STRING,
     TIME,
   }
