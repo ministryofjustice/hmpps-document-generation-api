@@ -9,3 +9,18 @@ integration:
     url: "https://manage-users-api.hmpps.service.justice.gov.uk"
   template-configuration:
     url: "https://document-generation-api-preprod.hmpps.service.justice.gov.uk"
+
+service:
+  allow-pulling-templates: true
+  auto-pull-templates: true
+  include-templates:
+    - TAP_ROTL_23SCH
+    - TAP_ROTL_APP
+    - TAP_ROTL_BOARD
+    - TAP_ROTL_DEC
+    - TAP_ROTL_FNP
+    - TAP_ROTL_LIC1
+    - TAP_ROTL_MED1
+    - TAP_ROTL_NOTIFY
+    - TAP_ROTL_OM1
+    - TAP_ROTL_POL1

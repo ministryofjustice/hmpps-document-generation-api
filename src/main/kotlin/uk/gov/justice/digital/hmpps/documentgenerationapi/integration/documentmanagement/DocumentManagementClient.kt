@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentm
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA
 import org.springframework.http.client.MultipartBodyBuilder
@@ -10,6 +11,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 import tools.jackson.databind.node.JsonNodeFactory
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.retryOnTransientException
@@ -26,8 +28,13 @@ class DocumentManagementClient(
     .header(SERVICE_NAME_KEY, SERVICE_NAME_VALUE)
     .header(USERNAME_KEY, DocumentTemplateContext.retrieve().username)
     .body(BodyInserters.fromMultipartData(file.generateMultipartBody(id, name, contentType)))
-    .retrieve()
-    .bodyToMono<ManagedDocument>()
+    .exchangeToMono { res ->
+      when (res.statusCode()) {
+        HttpStatus.CONFLICT -> Mono.just(ManagedDocument(id))
+        HttpStatus.CREATED -> res.bodyToMono<ManagedDocument>()
+        else -> res.createError()
+      }
+    }
     .retryOnTransientException()
     .block()!!
 
