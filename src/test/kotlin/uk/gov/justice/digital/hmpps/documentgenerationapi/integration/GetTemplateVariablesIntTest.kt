@@ -54,6 +54,7 @@ class GetTemplateVariablesIntTest : IntegrationTestBase() {
               TemplateVariables.Variable(code = "perCro", description = "CRO number", type = Type.STRING),
               TemplateVariables.Variable(code = "perPnc", description = "PNC number", type = Type.STRING),
               TemplateVariables.Variable(code = "perBookNo", description = "Booking number", type = Type.STRING),
+              TemplateVariables.Variable(code = "perLocation", description = "Location", type = Type.STRING),
               TemplateVariables.Variable(code = "perDob", description = "Date of birth", type = Type.DATE),
               TemplateVariables.Variable(code = "perSecCat", description = "Security category", type = Type.STRING),
             ),
