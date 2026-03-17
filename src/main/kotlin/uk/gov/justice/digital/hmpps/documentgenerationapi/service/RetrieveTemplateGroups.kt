@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.service
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateRepository
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.TemplateGroup
@@ -18,10 +19,11 @@ class RetrieveTemplateGroups(
 ) {
   fun all(): TemplateGroups = groupRepository.findAll().map(TemplateGroup::asGroup).let { TemplateGroups(it) }
 
+  @Transactional(readOnly = true)
   fun templates(groupCode: String): TemplateGroupTemplates {
     val group = groupRepository.getGroup(groupCode)
     val templates = templateRepository.findByGroupCode(group.id)
     return TemplateGroupTemplates(group.asGroup(), templates.map { it.asTemplate() })
   }
 }
-private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description, instructionText)
+private fun DocumentTemplate.asTemplate() = TemplateSummary(id, code, name, description, instructionText, variableDomains = variables().map { it.variable.domain })
