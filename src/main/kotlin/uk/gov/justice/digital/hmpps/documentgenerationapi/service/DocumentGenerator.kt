@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream
 import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.reflect.full.cast
@@ -52,8 +53,8 @@ class DocumentGenerator(
   ): ByteArray = WordprocessingMLPackage.load(file.inputStream()).let { wp ->
     val extraVariables = listOfNotNull(
       personImage?.let { PERSON_IMAGE to it },
-      DATE_NOW to LocalDate.now(),
-      DATE_TIME_NOW to LocalDateTime.now(),
+      DATE_NOW to DATE_FORMATTER.format(LocalDate.now()),
+      DATE_TIME_NOW to DATE_TIME_FORMATTER.format(LocalDateTime.now()),
     ).toMap()
     wp.replaceBookmarks(request.variables + extraVariables)
     wp.contentTypeManager.addOverrideContentType(URI("/word/document.xml"), WORDPROCESSINGML_DOCUMENT)
@@ -109,6 +110,11 @@ class DocumentGenerator(
   companion object {
     private const val DATE_NOW = "dateNow"
     private const val DATE_TIME_NOW = "dateTimeNow"
+    private const val DATE_FORMAT = "dd/MM/yyyy"
+    private val DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT)
+    private const val DATE_TIME_FORMAT = "$DATE_FORMAT hh:mm:ss"
+    private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)
+
     private const val PERSON_IMAGE = "perImage"
     private const val IMAGE_FILENAME = "person-image"
     private const val IMAGE_MAX_WIDTH = 1800
