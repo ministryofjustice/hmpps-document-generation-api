@@ -15,7 +15,6 @@ import org.springframework.http.MediaType
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement.DocumentManagementClient.Companion.SERVICE_NAME_KEY
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.documentmanagement.DocumentManagementClient.Companion.SERVICE_NAME_VALUE
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.DocumentType
-import wiremock.com.google.common.base.Predicates.equalTo
 import java.util.UUID
 
 class DocumentManagementMockServer : WireMockServer(9000) {
