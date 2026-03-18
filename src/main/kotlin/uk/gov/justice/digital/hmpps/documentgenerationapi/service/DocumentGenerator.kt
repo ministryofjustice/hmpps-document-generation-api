@@ -1,17 +1,9 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.service
 
 import jakarta.xml.bind.JAXBElement
-import org.docx4j.XmlUtils
-import org.docx4j.dml.wordprocessingDrawing.Anchor
-import org.docx4j.dml.wordprocessingDrawing.Inline
-import org.docx4j.dml.wordprocessingDrawing.STAlignH
-import org.docx4j.dml.wordprocessingDrawing.STRelFromH
-import org.docx4j.dml.wordprocessingDrawing.STRelFromV
-import org.docx4j.jaxb.Context
 import org.docx4j.openpackaging.contenttype.ContentTypes.WORDPROCESSINGML_DOCUMENT
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage
-import org.docx4j.openpackaging.parts.relationships.Namespaces
 import org.docx4j.wml.CTBookmark
 import org.docx4j.wml.CTMarkupRange
 import org.docx4j.wml.ContentAccessor
@@ -75,16 +67,14 @@ class DocumentGenerator(
       if (data.containsKey(bookmark.name)) {
         val parent = bookmark.parent as? ContentAccessor ?: return@forEach
         val start = parent.content.indexOf(bookmark)
-        val end = parent.content.indexOfLast {
-          it is JAXBElement<*> && it.value is CTMarkupRange && (it.value as CTMarkupRange).id == bookmark.id
-        }
+        val end = parent.content.indexOfLast { it is JAXBElement<*> && it.value is CTMarkupRange && (it.value as CTMarkupRange).id == bookmark.id }
 
         for (i in end - 1 downTo start + 1) {
           parent.content.removeAt(i)
         }
 
         when (val value = data[bookmark.name]) {
-          is ByteArray -> parent.content.add(start + 1, runWithImage(value, id, bookmark.name != PERSON_IMAGE))
+          is ByteArray -> parent.content.add(start + 1, runWithImage(value, id))
           else -> parent.content.add(start + 1, runWithText(value.toString()))
         }
       }
@@ -107,48 +97,13 @@ class DocumentGenerator(
     }
   }
 
-  private fun WordprocessingMLPackage.runWithImage(image: ByteArray, id: AtomicLong, inlineImage: Boolean = true): R = ObjectFactory().let { factory ->
+  private fun WordprocessingMLPackage.runWithImage(image: ByteArray, id: AtomicLong): R = ObjectFactory().let { factory ->
     factory.createR().also { run ->
       factory.createDrawing().apply {
-        val inline = BinaryPartAbstractImage.createImagePart(this@runWithImage, image)
-          .createImageInline(
-            IMAGE_FILENAME,
-            IMAGE_FILENAME,
-            id.getAndIncrement(),
-            id.getAndIncrement().toInt(),
-            false,
-            IMAGE_MAX_WIDTH,
-          )
-        anchorOrInline.add(if (inlineImage) inline else inline.asAnchor())
+        BinaryPartAbstractImage.createImagePart(this@runWithImage, image)
+          .createImageInline(IMAGE_FILENAME, IMAGE_FILENAME, id.getAndIncrement(), id.getAndIncrement().toInt(), false, IMAGE_MAX_WIDTH)
+          .also { anchorOrInline.add(it) }
       }.also { run.content.add(it) }
-    }
-  }
-
-  private fun Inline.asAnchor(): Anchor {
-    val xml = XmlUtils.marshaltoString(
-      this,
-      true,
-      false,
-      Context.jc,
-      Namespaces.NS_WORD12,
-      "anchor",
-      Inline::class.java,
-    )
-    val anchor = XmlUtils.unmarshalString(xml, Context.jc, Anchor::class.java) as Anchor
-    val dmlFactory = org.docx4j.dml.ObjectFactory()
-    val wordDmlFactory = org.docx4j.dml.wordprocessingDrawing.ObjectFactory()
-    return anchor.apply {
-      setSimplePos(dmlFactory.createCTPoint2D())
-      getSimplePos().setX(0L)
-      getSimplePos().setY(0L)
-      isSimplePosAttr = false
-      setPositionH(wordDmlFactory.createCTPosH())
-      getPositionH().setAlign(STAlignH.RIGHT)
-      getPositionH().setRelativeFrom(STRelFromH.MARGIN)
-      setPositionV(wordDmlFactory.createCTPosV())
-      getPositionV().setPosOffset(0)
-      getPositionV().setRelativeFrom(STRelFromV.MARGIN)
-      setWrapNone(wordDmlFactory.createCTWrapNone())
     }
   }
 
