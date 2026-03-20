@@ -39,6 +39,8 @@ class GetTemplateVariablesIntTest : IntegrationTestBase() {
               TemplateVariables.Variable(code = "prsnName", description = "Prison name", type = Type.STRING),
               TemplateVariables.Variable(code = "prsnAddress", description = "Prison address", type = Type.STRING),
               TemplateVariables.Variable(code = "prsnPhone", description = "Prison phone number", type = Type.STRING),
+              TemplateVariables.Variable(code = "prsnEmailFax", description = "Prison email or fax", type = Type.STRING),
+              TemplateVariables.Variable(code = "prsnSecCat", description = "Prison security category", type = Type.STRING),
             ),
           ),
           TemplateVariables.Domain(
