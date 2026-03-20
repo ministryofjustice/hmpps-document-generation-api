@@ -33,22 +33,22 @@ class DocumentTemplate(
   override val id: UUID = newUuid(),
 ) : Identifiable {
   @Version
-  var version: Int? = null
+  final var version: Int? = null
     private set
 
-  var code: String = code
+  final var code: String = code
     private set
 
-  var name: String = name
+  final var name: String = name
     private set
 
-  var description: String = description
+  final var description: String = description
     private set
 
-  var instructionText: String? = instructionText
+  final var instructionText: String? = instructionText
     private set
 
-  var externalReference: UUID = externalReference
+  final var externalReference: UUID = externalReference
     private set
 
   @OneToMany(mappedBy = "template", cascade = [CascadeType.ALL], orphanRemoval = true)

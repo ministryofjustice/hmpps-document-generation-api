@@ -32,6 +32,7 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+    version: 5.32.1
 
 client:
   id: document-generation
