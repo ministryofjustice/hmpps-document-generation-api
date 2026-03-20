@@ -23,7 +23,7 @@ import java.util.UUID
 @Audited
 @Entity
 @Table
-class DocumentTemplate(
+final class DocumentTemplate(
   code: String,
   name: String,
   description: String,
@@ -33,22 +33,22 @@ class DocumentTemplate(
   override val id: UUID = newUuid(),
 ) : Identifiable {
   @Version
-  final var version: Int? = null
+  var version: Int? = null
     private set
 
-  final var code: String = code
+  var code: String = code
     private set
 
-  final var name: String = name
+  var name: String = name
     private set
 
-  final var description: String = description
+  var description: String = description
     private set
 
-  final var instructionText: String? = instructionText
+  var instructionText: String? = instructionText
     private set
 
-  final var externalReference: UUID = externalReference
+  var externalReference: UUID = externalReference
     private set
 
   @OneToMany(mappedBy = "template", cascade = [CascadeType.ALL], orphanRemoval = true)
