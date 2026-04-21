@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
+import io.swagger.v3.oas.models.tags.Tag
 import org.springdoc.core.customizers.OperationCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.ApplicationContext
@@ -37,10 +38,30 @@ class OpenApiConfiguration(buildProperties: BuildProperties, private val context
       ),
     )
     .tags(
-      listOf(),
+      listOf(
+        Tag().name("Templates").description("Create and retrieve document templates, and generate documents from them"),
+        Tag().name("Template variables").description("Retrieve the supported template variables and their domains"),
+        Tag().name("Template groups").description("Retrieve template groups and the templates within them"),
+      ),
     )
     .info(
-      Info().title("HMPPS Document Generation Api").version(version)
+      Info()
+        .title("HMPPS Document Generation API")
+        .version(version)
+        .description(
+          "A single-purpose document generation API. Retrieves Word document templates from the HMPPS Document Management API, " +
+            "applies bookmark based variable substitution via docx4j, and returns the generated document to the caller.\n\n" +
+            "Designed as a shared DPS capability with no knowledge of any specific HMPPS domain. " +
+            "Currently used exclusively by the Receptions and External Movements product set.\n\n" +
+            "## Design constraints\n\n" +
+            "* No document storage - documents are generated on demand and returned to the caller\n" +
+            "* No NOMIS dependency - template variables are supplied by the caller\n" +
+            "* No domain logic - the API has no knowledge of what the documents are for\n\n" +
+            "## Authentication\n\n" +
+            "This API uses OAuth2 with JWTs. Pass the JWT in the `Authorization` header using the `Bearer` scheme.\n\n" +
+            "## Authorisation\n\n" +
+            "Roles required for each endpoint are documented in the endpoint descriptions.",
+        )
         .contact(Contact().name("HMPPS Digital Studio").email("feedback@digital.justice.gov.uk")),
     ).components(
       Components().addSecuritySchemes(
