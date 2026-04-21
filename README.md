@@ -4,155 +4,216 @@
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-document-generation-api)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://document-generation-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
 
-Database Schema diagram: https://ministryofjustice.github.io/hmpps-document-generation-api/schema-spy-report
+Database schema: https://ministryofjustice.github.io/hmpps-document-generation-api/schema-spy-report
 
-Template github repo used for new Kotlin based projects.
+---
 
-# Instructions
+## What this service does
 
-If this is a HMPPS project then the project will be created as part of bootstrapping -
-see [hmpps-project-bootstrap](https://github.com/ministryofjustice/hmpps-project-bootstrap). You are able to specify a
-template application using the `github_template_repo` attribute to clone without the need to manually do this yourself
-within GitHub.
+A single-purpose document generation API. It retrieves Word document templates from the [HMPPS Document Management API](https://github.com/ministryofjustice/hmpps-document-management-api), applies variable substitution using bookmark based replacement via `docx4j`, and returns the generated document to the caller as a buffered response. Generation events are audited.
 
-This project is community managed by the mojdt `#kotlin-dev` slack channel.
-Please raise any questions or queries there. Contributions welcome!
+The service is designed as a shared DPS capability. It has no knowledge of any specific HMPPS domain, and any DPS service that needs template-based document generation can use it. It is currently used exclusively by the **Receptions and External Movements** product set.
 
-Our security policy is located [here](https://github.com/ministryofjustice/hmpps-document-generation-api/security/policy).
+The reference UI implementation is [hmpps-document-generation-ui](https://github.com/ministryofjustice/hmpps-document-generation-ui).
 
-Documentation to create new service is located [here](https://tech-docs.hmpps.service.justice.gov.uk/creating-new-services/).
+### Key design constraints
 
-## Creating a Cloud Platform namespace
+- No document storage - documents are generated on demand and returned to the caller
+- No NOMIS dependency - template variables are supplied by the calling service
+- No domain logic - the API does not know what the documents are for
 
-When deploying to a new namespace, you may wish to use the
-[templates project namespace](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev)
-as the basis for your new namespace. This namespace contains both the kotlin and typescript template projects,
-which is the usual way that projects are setup.
+---
 
-Copy this folder and update all the existing namespace references to correspond to the environment to which you're deploying.
+## Template variables
 
-If you only need the kotlin configuration then remove all typescript references and remove the elasticache configuration.
+Variables are substituted into Word document bookmarks at generation time. The caller supplies all values; pre-population from DPS sources (Prisoner Search, Prison Register, etc.) is the responsibility of the calling UI.
 
-To ensure the correct github teams can approve releases, you will need to make changes to the configuration in `resources/service-account-github` where the appropriate team names will need to be added (based on [lines 98-100](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev/resources/serviceaccount-github.tf#L98) and the reference appended to the teams list below [line 112](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev/resources/serviceaccount-github.tf#L112)). Note: hmpps-sre is in this list to assist with deployment issues.
+Two variables are injected automatically by the API at generation time and cannot be overridden by the caller:
 
-Submit a PR to the Cloud Platform team in [#ask-cloud-platform](https://moj.enterprise.slack.com/archives/C57UPMZLY).
-Further instructions from the Cloud Platform team can be found in the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide)
+| Code | Description |
+|---|---|
+| `dateNow` | Date of generation (`dd/MM/yyyy`) |
+| `dateTimeNow` | Date and time of generation (`dd/MM/yyyy hh:mm:ss`) |
 
-## Renaming from HMPPS Document Generation Api - github Actions
+### PERSON — Prisoner details
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+Pre-populated from [Prisoner Search API](https://prisoner-search-dev.prison.service.justice.gov.uk/swagger-ui/index.html) `GET /prisoner/{id}` by the calling UI.
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`. This workflow will
-execute the `rename-project.bash` and create Pull Request for you to review. Review the PR and merge.
+| Code | Description | Type |
+|---|---|---|
+| `perName` | Full name | String |
+| `perFirstName` | First name | String |
+| `perMiddleNames` | Middle names | String |
+| `perLastName` | Last name | String |
+| `perImage` | Prisoner photo | Binary |
+| `perPrsnNo` | Prison number | String |
+| `perCro` | CRO number | String |
+| `perPnc` | PNC number | String |
+| `perBookNo` | Booking number | String |
+| `perDob` | Date of birth | Date |
+| `perSecCat` | Security category | String |
+| `perLocation` | Location | String |
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+**`perImage` is handled differently from all other variables.** Rather than being passed as a string in the `variables` map, the prisoner image must be fetched by the calling service from the Prison API and sent as a named multipart file part (`perImage`) alongside the JSON request body. The API does not fetch the image itself.
 
-The script takes six arguments:
+The calling UI fetches the image and constructs the multipart request like this (from [hmpps-document-generation-ui](https://github.com/ministryofjustice/hmpps-document-generation-ui)):
 
-### New project name
+```typescript
+// Fetch the image as a buffer from the Prison API
+const buffer = await this.services.prisonApiService.getPrisonerImageAsBuffer({ res }, req.body['perImage'])
+const image = { buffer, originalname: `${req.body['perImage']}.png` }
 
-This should start with `hmpps-` e.g. `hmpps-prison-visits` so that it can be easily distinguished in github from
-other departments projects. Try to avoid using abbreviations so that others can understand easily what your project is.
-
-### Slack channel for release notifications
-
-By default, release notifications are only enabled for production. The circleci configuration can be amended to send
-release notifications for deployments to other environments if required. Note that if the configuration is amended,
-the slack channel should then be amended to your own team's channel as `dps-releases` is strictly for production release
-notifications. If the slack channel is set to something other than `dps-releases`, production release notifications
-will still automatically go to `dps-releases` as well. This is configured by `releases-slack-channel` in
-`.circleci/config.yml`.
-
-### Slack channel for pipeline security notifications
-
-Ths channel should be specific to your team and is for daily / weekly security scanning job results. It is your team's
-responsibility to keep up-to-date with security issues and update your application so that these jobs pass. You will
-only be notified if the jobs fail. The scan results can always be found in circleci for your project. This is
-configured by `alerts-slack-channel` in `.circleci/config.yml`.
-
-### Non production kubernetes alerts
-
-By default Prometheus alerts are created in the application namespaces to monitor your application e.g. if your
-application is crash looping, there are a significant number of errors from the ingress. Since Prometheus runs in
-cloud platform AlertManager needs to be setup first with your channel. Please see
-[Create your own custom alerts](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html)
-in the Cloud Platform user guide. Once that is setup then the `custom severity label` can be used for
-`alertSeverity` in the `helm_deploy/values-*.yaml` configuration.
-
-Normally it is worth setting up two separate labels and therefore two separate slack channels - one for your production
-alerts and one for your non-production alerts. Using the same channel can mean that production alerts are sometimes
-lost within non-production issues.
-
-### Production kubernetes alerts
-
-This is the severity label for production, determined by the `custom severity label`. See the above
-[Non production kubernetes alerts section](non-production-kubernetes-alerts) for more information. This is configured in `helm_deploy/values-prod.yaml`.
-
-### Product ID
-
-This is so that we can link a component to a product and thus provide team and product information in the Developer
-Portal. Refer to the developer portal at <https://developer-portal.hmpps.service.justice.gov.uk/products> to find your
-product id. This is configured in `helm_deploy/<project_name>/values.yaml`.
-
-## Manually branding from template app
-
-Run the `rename-project.bash` without any arguments. This will prompt for the six required parameters and create a PR.
-The script requires a recent version of `bash` to be installed, as well as GNU `sed` in the path.
-
-## Common Kotlin patterns
-
-Many patterns have evolved for HMPPS Kotlin applications. Using these patterns provides consistency across our suite of
-Kotlin microservices and allows you to concentrate on building your business needs rather than reinventing the
-technical approach.
-
-Documentation for these patterns can be found in the [HMPPS tech docs](https://tech-docs.hmpps.service.justice.gov.uk/common-kotlin-patterns/).
-If this documentation is incorrect or needs improving please report to [#ask-prisons-digital-sre](https://moj.enterprise.slack.com/archives/C06MWP0UKDE)
-or [raise a PR](https://github.com/ministryofjustice/hmpps-tech-docs).
-
-## Running the application locally
-
-The application comes with a `dev` spring profile that includes default settings for running locally. This is not
-necessary when deploying to kubernetes as these values are included in the helm configuration templates -
-e.g. `values-dev.yaml`.
-
-There is also a `docker-compose.yml` that can be used to run a local instance of the template in docker and also an
-instance of HMPPS Auth (required if your service calls out to other services using a token).
-
-```bash
-docker compose pull && docker compose up
+// Pass as a named file alongside the variables
+await this.services.documentGenerationService.generateDocument(
+  { res },
+  templateId,
+  filename,
+  variables,        // all other variable values — perImage is excluded from this map
+  image,            // sent as multipart file part named 'perImage'
+)
 ```
 
-will run the application and HMPPS Auth within a local docker instance.
+Which produces the following `POST /templates/{id}/document` request:
 
-### Running the application in Intellij
-
-```bash
-docker compose pull && docker compose up --scale hmpps-document-generation-api=0
+```typescript
+// From documentGenerationService.ts
+this.apiClient.withContext(context).post<Buffer>({
+  path: `/templates/${id}/document`,
+  responseType: 'application/msword',
+  multipartData: { data: { filename, variables } },
+  ...(prisonerImage ? { files: { perImage: prisonerImage } } : {}),
+})
 ```
 
-will just start a docker instance of HMPPS Auth. The application should then be started with a `dev` active profile
-in Intellij.
+The `variables` map contains all other variable values keyed by their variable code, for example:
 
-### Building and running the docker image locally
+```json
+{
+  "filename": "ROTL_LIC1_A1234BC_user_2026-04-21_14-30-00.docx",
+  "variables": {
+    "perName": "John Smith",
+    "perPrsnNo": "A1234BC",
+    "perDob": "1980-06-15",
+    "prsnName": "HMP Brixton",
+    "prsnAddress": "Jebb Avenue\nBrixton\nLondon\nSW2 5XF",
+    "tapStartDate": "2026-05-01",
+    "tapEndDate": "2026-05-03",
+    "tapCat": "ROTL - Resettlement day release"
+  }
+}
+```
 
-The `Dockerfile` relies on the application being built first. Steps to build the docker image:
-1. Build the jar files
+### PRISON — Prison details
+
+Pre-populated from [Prison Register API](https://prison-register-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html) `GET /prisons/id/{prisonId}` by the calling UI.
+
+| Code | Description | Type |
+|---|---|---|
+| `prsnCode` | Prison code | String |
+| `prsnName` | Prison name | String |
+| `prsnAddress` | Prison address | String |
+| `prsnPhone` | Prison phone number | String |
+| `prsnEmailFax` | Prison email or fax | String |
+| `prsnSecCat` | Prison security category | String |
+
+### TEMPORARY_ABSENCE — Absence information
+
+Pre-populated from the External Movements API by the calling UI.
+
+| Code | Description | Type |
+|---|---|---|
+| `tapStartDate` | Start date | Date |
+| `tapStartTime` | Start time | Time |
+| `tapEndDate` | Expiry date | Date |
+| `tapEndTime` | Expiry time | Time |
+| `tapCat` | Reason for absence | String |
+
+### SENTENCE — Sentence details
+
+User-supplied — no DPS source available for pre-population.
+
+| Code | Description | Type |
+|---|---|---|
+| `sentMainOff` | Main offence | String |
+| `sentCurOff` | Current offence | String |
+| `sentEarliestCrtApp` | Earliest court appearance | Date |
+| `sentDate` | Date of sentence | Date |
+| `sentLenYears` | Sentence length — years | Number |
+| `sentLenMonths` | Sentence length — months | Number |
+| `sentLenDays` | Sentence length — days | Number |
+| `sentArdCrd` | ARD/CRD | Date |
+| `sentCrd` | CRD | Date |
+| `sentPed` | PED or review date | Date |
+| `sentSled` | SLED | Date |
+
+### OFFENDER_MANAGER — Manager details
+
+User-supplied — no DPS source available for pre-population.
+
+| Code | Description | Type |
+|---|---|---|
+| `omApptDate` | Date of initial appointment with offender manager after release on licence | Date |
+| `omApptTime` | Start time | Time |
+| `omApptAddr` | Address of probation office where initial appointment is scheduled | String |
+
+---
+
+## Template deployment
+
+Templates are not deployed directly to each environment. Instead, each environment pulls templates and their configuration from the environment below it on startup. Dev is the starting point — templates are authored and tested there before propagating upward.
+
+### How it works
+
+On startup, the API reads the `service.include-templates` list from its config. For each template code in that list, it calls its own API in the environment below to retrieve the template file and configuration, then upserts them locally. The propagation chain is:
+
 ```
-./gradlew clean assemble
+dev  →  (pulled by) preprod  →  (pulled by) prod
 ```
-2. Copy the jar files to the base directory so that the docker build can find them
+
+The source URL and template list are configured per environment:
+
+```yaml
+# application-preprod.yml
+integration:
+  template-configuration:
+    url: "https://document-generation-api-dev.hmpps.service.justice.gov.uk"
+
+service:
+  allow-pulling-templates: true
+  auto-pull-templates: true
+  include-templates:
+    - TAP_ROTL_LIC1
+    - TAP_ROTL_NOTIFY
+    # ... other template codes
 ```
-cp build/libs/*.jar .
+
+```yaml
+# application-prod.yml
+integration:
+  template-configuration:
+    url: "https://document-generation-api-preprod.hmpps.service.justice.gov.uk"
+
+service:
+  allow-pulling-templates: true
+  auto-pull-templates: true
+  include-templates:
+    - TAP_ROTL_LIC1
+    - TAP_ROTL_NOTIFY
+    # ... other template codes
 ```
-3. Build the docker image with required arguments
-```
-docker build --build-arg GIT_REF=21345 --build-arg GIT_BRANCH=bob --build-arg BUILD_NUMBER=$(date '+%Y-%m-%d') .
-```
-4. Run the docker image, setting the auth url so that it starts up
-```
-docker run -e HMPPS_AUTH_URL="https://sign-in-dev.hmpps.service.justice.gov.uk/auth" <sha from step 3>
-```
+
+In dev, `allow-pulling-templates` and `auto-pull-templates` default to `false` — dev is the origin, not a consumer.
+
+### Adding or updating a template
+
+1. **BA** uses the doc gen UI to upload, configure, and test the template in dev. This includes setting the template code, variables, groups, instruction text, and the `.dotx` file.
+2. **Dev** adds the template code to `service.include-templates` in both `application-preprod.yml` and `application-prod.yml`, and raises a PR.
+3. **On startup**, preprod pulls the template and its configuration from dev; prod pulls from preprod. No manual file copying or environment-specific template management is required.
+
+---
+
+## Groups
+
+Groups bring together templates for a specific domain or service. The two groups currently defined for External Movements are `EXTERNAL_MOVEMENT` and `TEMPORARY_ABSENCE`.
+
+A new service using the doc gen API should define its own group and assign only its templates to it. That service's UI is then responsible for listing and presenting only the templates from its own group — there is no role-based access control at the group level. This means care is needed when managing groups and templates to avoid exposing templates from one service in another service's UI.
