@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
 import uk.gov.justice.digital.hmpps.documentgenerationapi.config.CaseloadIdHeader
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.TEMPLATES
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.GenerateFromTemplate
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateDetail
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateRequest
@@ -30,7 +31,7 @@ import uk.gov.justice.digital.hmpps.documentgenerationapi.service.RetrieveDocume
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 import java.util.UUID
 
-@Tag(name = "Templates")
+@Tag(name = TEMPLATES)
 @RestController
 @RequestMapping(value = ["/templates"])
 class TemplateController(

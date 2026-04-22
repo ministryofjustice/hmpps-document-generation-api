@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.TEMPLATE_VARIABLES
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateVariables
 import uk.gov.justice.digital.hmpps.documentgenerationapi.service.RetrieveTemplateVariables
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
-@Tag(name = "Template variables")
+@Tag(name = TEMPLATE_VARIABLES)
 @RestController
 @RequestMapping(value = ["/variables"])
 @PreAuthorize("hasRole('${Roles.DOCUMENT_GENERATION_UI}')")

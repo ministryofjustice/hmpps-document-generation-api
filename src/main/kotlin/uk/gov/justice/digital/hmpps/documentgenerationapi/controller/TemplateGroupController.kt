@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.documentgenerationapi.Roles
+import uk.gov.justice.digital.hmpps.documentgenerationapi.config.TEMPLATE_GROUPS
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroupTemplates
 import uk.gov.justice.digital.hmpps.documentgenerationapi.model.TemplateGroups
 import uk.gov.justice.digital.hmpps.documentgenerationapi.service.RetrieveTemplateGroups
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
-@Tag(name = "Template groups")
+@Tag(name = TEMPLATE_GROUPS)
 @RestController
 @RequestMapping(value = ["/groups"])
 class TemplateGroupController(

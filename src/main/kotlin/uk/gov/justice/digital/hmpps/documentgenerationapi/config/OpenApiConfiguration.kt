@@ -22,6 +22,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.method.HandlerMethod
 
+const val TEMPLATES = "Templates"
+const val TEMPLATE_VARIABLES = "Template variables"
+const val TEMPLATE_GROUPS = "Template groups"
+
 @Configuration
 class OpenApiConfiguration(buildProperties: BuildProperties, private val context: ApplicationContext) {
   private val version: String? = buildProperties.version
@@ -39,9 +43,9 @@ class OpenApiConfiguration(buildProperties: BuildProperties, private val context
     )
     .tags(
       listOf(
-        Tag().name("Templates").description("Create and retrieve document templates, and generate documents from them"),
-        Tag().name("Template variables").description("Retrieve the supported template variables and their domains"),
-        Tag().name("Template groups").description("Retrieve template groups and the templates within them"),
+        Tag().name(TEMPLATES).description("Create and retrieve document templates, and generate documents from them"),
+        Tag().name(TEMPLATE_VARIABLES).description("Retrieve the supported template variables and their domains"),
+        Tag().name(TEMPLATE_GROUPS).description("Retrieve template groups and the templates within them"),
       ),
     )
     .info(
