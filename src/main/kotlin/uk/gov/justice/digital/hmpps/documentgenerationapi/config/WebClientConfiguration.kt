@@ -22,21 +22,14 @@ class WebClientConfiguration(
 ) {
 
   @Bean
-  fun documentManagementWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) =
-    builder.authorisedWebClient(documentManagementBaseUri, authorizedClientManager)
+  fun documentManagementWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(documentManagementBaseUri, authorizedClientManager)
 
   @Bean
-  fun manageUsersWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) =
-    builder.authorisedWebClient(manageUsersBaseUri, authorizedClientManager)
+  fun manageUsersWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(manageUsersBaseUri, authorizedClientManager)
 
   @Bean
   @ConditionalOnBooleanProperty("service.allow-pulling-templates")
-  fun templateConfigurationWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) =
-    builder.authorisedWebClient(
-      templateConfigurationBaseUri,
-      authorizedClientManager,
-      registrationId = "template-config",
-    )
+  fun templateConfigurationWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = builder.authorisedWebClient(templateConfigurationBaseUri, authorizedClientManager, registrationId = "template-config")
 
   fun Builder.authorisedWebClient(
     url: String,

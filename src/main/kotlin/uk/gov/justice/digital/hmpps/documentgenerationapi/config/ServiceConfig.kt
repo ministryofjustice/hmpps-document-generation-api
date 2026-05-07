@@ -8,5 +8,5 @@ data class ServiceConfig(
   val allowPullingTemplates: Boolean = false,
   val autoPullTemplates: Boolean = false,
   val includeTemplates: Set<String> = setOf(),
-  val httpProtocol: Set<HttpProtocol>
+  val httpProtocol: Set<HttpProtocol>,
 )
