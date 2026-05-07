@@ -20,6 +20,11 @@ generic-service:
     enabled: true
     host: app-hostname.local # override per environment
     tlsSecretName: hmpps-document-generation-api-cert
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "H2C"
+      nginx.ingress.kubernetes.io/server-snippet: |
+        server_tokens off;
+        more_set_headers "Strict-Transport-Security: \"max-age=31536000; includeSubDomains; preload\"";
 
   # Used to access resources like S3 buckets, SQS queues and SNS topics
   serviceAccountName: hmpps-document-generation-api
