@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.config
 
+import io.sentry.Sentry
 import jakarta.validation.ValidationException
-import org.slf4j.LoggerFactory
 import org.springframework.context.MessageSourceResolvable
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.DataIntegrityViolationException
@@ -44,7 +44,7 @@ class DocumentGenerationApiExceptionHandler {
     .body(
       ErrorResponse(
         status = BAD_REQUEST,
-        userMessage = "Invalid request: ${e.message}",
+        userMessage = "Invalid request",
         developerMessage = e.devMessage(),
       ),
     )
@@ -56,48 +56,19 @@ class DocumentGenerationApiExceptionHandler {
   fun handleValidationException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> = e.allErrors.mapErrors()
 
   @ExceptionHandler(AccessDeniedException::class)
-  fun handleAccessDeniedException(e: AccessDeniedException): ResponseEntity<ErrorResponse> = ResponseEntity
+  fun handleAccessDeniedException(): ResponseEntity<ErrorResponse> = ResponseEntity
     .status(FORBIDDEN)
-    .body(
-      ErrorResponse(
-        status = FORBIDDEN,
-        userMessage = "Forbidden: ${e.message}",
-        developerMessage = e.message,
-      ),
-    )
+    .body(ErrorResponse(status = FORBIDDEN))
 
-  @ExceptionHandler(NoResourceFoundException::class)
-  fun handleNoResourceFoundException(e: NoResourceFoundException): ResponseEntity<ErrorResponse> = ResponseEntity
+  @ExceptionHandler(NotFoundException::class, NoResourceFoundException::class)
+  fun handleNotFoundException(): ResponseEntity<ErrorResponse> = ResponseEntity
     .status(NOT_FOUND)
-    .body(
-      ErrorResponse(
-        status = NOT_FOUND,
-        userMessage = "No resource found failure: ${e.message}",
-        developerMessage = e.message,
-      ),
-    )
-
-  @ExceptionHandler(NotFoundException::class)
-  fun handleNoResourceFoundException(e: NotFoundException): ResponseEntity<ErrorResponse> = ResponseEntity
-    .status(NOT_FOUND)
-    .body(
-      ErrorResponse(
-        status = NOT_FOUND,
-        userMessage = "Not found: ${e.message}",
-        developerMessage = "${e.entity} with identifier ${e.identifier}",
-      ),
-    )
+    .body(ErrorResponse(status = NOT_FOUND))
 
   @ExceptionHandler(DataIntegrityViolationException::class, DataAccessException::class)
   fun handleConflictException(e: RuntimeException): ResponseEntity<ErrorResponse> = ResponseEntity
     .status(CONFLICT)
-    .body(
-      ErrorResponse(
-        status = CONFLICT,
-        userMessage = "Data integrity conflict",
-        developerMessage = e.devMessage(),
-      ),
-    )
+    .body(ErrorResponse(status = CONFLICT, userMessage = "Data integrity conflict", developerMessage = e.devMessage()))
 
   @ExceptionHandler(Exception::class)
   fun handleException(e: Exception): ResponseEntity<ErrorResponse> = ResponseEntity
@@ -105,17 +76,16 @@ class DocumentGenerationApiExceptionHandler {
     .body(
       ErrorResponse(
         status = INTERNAL_SERVER_ERROR,
-        userMessage = "Unexpected error: ${e.message}",
-        developerMessage = e.message,
+        userMessage = "Unexpected exception",
+        developerMessage = e.devMessage(),
       ),
-    ).also { log.error("Unexpected exception", e) }
-
-  private companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
-  }
+    )
 }
 
-private fun RuntimeException.devMessage(): String = message ?: "${this::class.simpleName}: ${cause?.message ?: ""}"
+private fun Exception.devMessage(): String {
+  val sentryId = Sentry.captureException(this)
+  return "${this::class.simpleName}: $sentryId"
+}
 
 private fun List<MessageSourceResolvable>.mapErrors() = map { it.defaultMessage!! }.distinct().sorted().let {
   val validationFailure = "Validation failure"
