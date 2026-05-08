@@ -85,9 +85,6 @@ spring:
     error:
       include-message: always
 
-sentry:
-  exception-resolver-order: -2147483647
-
 server:
   port: 8080
   http2:
@@ -134,4 +131,3 @@ logging:
 service:
   allow-pulling-templates: false
   auto-pull-templates: false
-  http-protocol: http11

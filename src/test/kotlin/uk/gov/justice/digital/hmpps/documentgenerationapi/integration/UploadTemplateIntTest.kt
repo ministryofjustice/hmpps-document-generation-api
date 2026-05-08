@@ -50,7 +50,7 @@ class UploadTemplateIntTest : IntegrationTestBase() {
     val username = username()
     val request = templateRequest(word(10))
     val res = uploadTemplate(request, null, username).errorResponse(HttpStatus.BAD_REQUEST)
-    assertThat(res.userMessage).isEqualTo("Invalid request: Attempt to create a template without a file")
+    assertThat(res.userMessage).isEqualTo("Invalid request")
   }
 
   @Test
