@@ -29,7 +29,12 @@ class AutoLoadTemplates(
 
   fun refreshAllTemplates() {
     templateRepository.findByCodeNotIn(serviceConfig.includeTemplates).forEach(templateRepository::delete)
-    serviceConfig.includeTemplates.mapNotNull { configClient.getTemplateByCode(it) }.forEach { new ->
+    serviceConfig.includeTemplates.mapNotNull {
+      configClient.getTemplateByCode(it) ?: run {
+        Sentry.captureException(IllegalStateException("Downstream config server not available for $it"))
+        null
+      }
+    }.forEach { new ->
       try {
         new.mergeTemplate()
       } catch (e: Exception) {
