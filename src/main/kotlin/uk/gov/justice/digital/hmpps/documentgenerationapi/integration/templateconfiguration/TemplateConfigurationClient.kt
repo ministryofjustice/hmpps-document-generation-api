@@ -27,6 +27,7 @@ class TemplateConfigurationClient(
         else -> res.createError()
       }
     }
+    .onErrorComplete()
     .retryOnTransientException()
     .block()
 

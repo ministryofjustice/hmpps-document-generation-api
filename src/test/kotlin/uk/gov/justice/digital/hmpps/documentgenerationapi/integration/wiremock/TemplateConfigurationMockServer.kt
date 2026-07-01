@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import tools.jackson.module.kotlin.jsonMapper
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.IdGenerator.newUuid
@@ -28,6 +29,17 @@ class TemplateConfigurationServer : WireMockServer(7979) {
           aResponse().withStatus(200)
             .withHeader("Content-Type", "application/json")
             .withBody(jsonMapper().writeValueAsString(config)),
+        ),
+    )
+  }
+
+  fun stubGetTemplateConfigFailure(code: String, httpStatus: HttpStatus) {
+    stubFor(
+      get(urlPathTemplate("/template-configuration/{code}"))
+        .withPathParam("code", equalTo(code))
+        .willReturn(
+          aResponse().withStatus(httpStatus.value())
+            .withHeader("Content-Type", "application/json"),
         ),
     )
   }

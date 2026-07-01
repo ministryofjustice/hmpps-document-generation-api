@@ -6,9 +6,11 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.documentgenerationapi.autoload.AutoLoadTemplates
 import uk.gov.justice.digital.hmpps.documentgenerationapi.domain.DocumentTemplateContext.Companion.SYSTEM_USERNAME
 import uk.gov.justice.digital.hmpps.documentgenerationapi.integration.wiremock.DocumentManagementExtension.Companion.documentManagementApi
@@ -138,5 +140,13 @@ class AutoLoadTemplateIntTest(@Autowired private val autoload: AutoLoadTemplates
       .containsExactlyInAnyOrder("perPrsnNo" to true, "perPnc" to true, "prsnName" to false)
 
     verifyAudit(saved, RevisionType.MOD, SYSTEM_USERNAME)
+  }
+
+  @Order(4)
+  @Test
+  fun `can start if template refresh fails - eg service not available`() {
+    templateConfigurationApi.stubGetTemplateConfigFailure(TEST_TEMPLATE_CODE, HttpStatus.SERVICE_UNAVAILABLE)
+
+    assertDoesNotThrow { autoload.refreshAllTemplates() }
   }
 }
