@@ -26,7 +26,7 @@ class WebClientConfiguration(
 
   @Bean
   @ConditionalOnBooleanProperty("service.allow-pulling-templates")
-  fun templateConfigurationWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = authorisedWebClient(templateConfigurationBaseUri, builder, authorizedClientManager, registrationId = "template-config")
+  fun templateConfigurationWebClient(authorizedClientManager: OAuth2AuthorizedClientManager, builder: Builder) = authorisedWebClient(templateConfigurationBaseUri, builder, authorizedClientManager, registrationId = "template-config", timeout = ofSeconds(3))
 
   fun authorisedWebClient(
     url: String,

@@ -27,8 +27,8 @@ class TemplateConfigurationClient(
         else -> res.createError()
       }
     }
-    .onErrorComplete()
     .retryOnTransientException()
+    .onErrorComplete()
     .block()
 
   fun getTemplate(id: UUID): ByteArray = webClient.get()
