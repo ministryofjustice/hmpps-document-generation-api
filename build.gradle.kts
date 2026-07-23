@@ -5,16 +5,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
-  kotlin("plugin.spring") version "2.4.0"
-  kotlin("plugin.jpa") version "2.4.0"
-  id("com.google.cloud.tools.jib") version "3.5.3"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.1"
+  kotlin("plugin.spring") version "2.4.10"
+  kotlin("plugin.jpa") version "2.4.10"
+  id("com.google.cloud.tools.jib") version "3.5.4"
   id("de.undercouch.download") version "5.7.0"
 }
 
 val doc4jVersion = "17.0.0"
-val hmppsKotlinVersion = "2.5.0"
-val sentryVersion = "8.46.0"
+val hmppsKotlinVersion = "3.0.0"
+val sentryVersion = "8.50.1"
 val springDocVersion = "3.0.3"
 val swaggerParserVersion = "2.1.45"
 val testContainersVersion = "1.21.4"
