@@ -13,7 +13,7 @@ plugins {
 }
 
 val doc4jVersion = "17.0.0"
-val hmppsKotlinVersion = "2.5.0"
+val hmppsKotlinVersion = "3.0.0"
 val sentryVersion = "8.50.1"
 val springDocVersion = "3.0.3"
 val swaggerParserVersion = "2.1.45"
