@@ -12,7 +12,7 @@ plugins {
   id("de.undercouch.download") version "5.7.0"
 }
 
-val doc4jVersion = "17.0.0"
+val doc4jVersion = "17.0.2"
 val hmppsKotlinVersion = "3.0.0"
 val sentryVersion = "8.50.1"
 val springDocVersion = "3.0.3"
