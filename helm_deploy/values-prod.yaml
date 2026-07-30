@@ -17,5 +17,5 @@ generic-service:
 generic-prometheus-alerts:
   alertSeverity: move-and-improve-alerts
   rdsAlertsDatabases:
-    cloud-platform-fd7746eb3d9871e5: "Document Generation API"
+    cloud-platform-fd7746eb3d9871e5: "Document Generation DB"
   rdsAlertsConnectionThreshold: 50
