@@ -31,7 +31,7 @@ generic-service:
 
   # Environment variables to load into the deployment
   env:
-    JDK_JAVA_OPTIONS: "-javaagent:/agent/agent.jar -Xmx512m -XX:+UseG1GC"
+    JDK_JAVA_OPTIONS: "-Xmx512m -XX:+UseG1GC"
     SERVER_PORT: "8080"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.json
     SENTRY_TRACES_SAMPLE_RATE: '0.05'
@@ -64,6 +64,7 @@ generic-service:
     enabled: true
     startup: '30 6 * * 1-5'
     shutdown: '30 21 * * 1-5'
+    timeZone: Europe/London
 
 generic-prometheus-alerts:
   targetApplication: hmpps-document-generation-api

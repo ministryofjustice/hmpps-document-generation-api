@@ -17,5 +17,5 @@ generic-prometheus-alerts:
   businessHoursOnly: true
   alertSeverity: move-and-improve-alerts-non-prod
   rdsAlertsDatabases:
-    cloud-platform-7ce98a6a498f2219: "Document Generation API"
+    cloud-platform-7ce98a6a498f2219: "Document Generation DB"
   rdsAlertsConnectionThreshold: 50
