@@ -2,16 +2,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.5"
   kotlin("plugin.spring") version "2.4.10"
   kotlin("plugin.jpa") version "2.4.10"
 }
 
-val doc4jVersion = "17.0.2"
+val doc4jVersion = "17.0.3"
 val hmppsKotlinVersion = "3.0.0"
 val sentryVersion = "8.53.0"
 val springDocVersion = "3.1.0"
-val swaggerParserVersion = "2.1.46"
+val swaggerParserVersion = "2.1.47"
 val testContainersVersion = "1.21.4"
 val uuidGeneratorVersion = "5.2.0"
 val wiremockVersion = "3.13.2"
