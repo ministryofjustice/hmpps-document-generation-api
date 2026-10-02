@@ -7,7 +7,7 @@ plugins {
   kotlin("plugin.jpa") version "2.4.20"
 }
 
-val doc4jVersion = "17.2.1"
+val doc4jVersion = "17.3.0"
 val hmppsKotlinVersion = "3.0.3"
 val sentryVersion = "8.59.0"
 val springDocVersion = "3.1.1"
