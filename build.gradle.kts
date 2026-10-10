@@ -2,12 +2,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.11"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.12"
   kotlin("plugin.spring") version "2.4.21"
   kotlin("plugin.jpa") version "2.4.21"
 }
 
-val doc4jVersion = "17.3.1"
+val doc4jVersion = "17.3.2"
 val hmppsKotlinVersion = "3.0.3"
 val sentryVersion = "8.60.0"
 val springDocVersion = "3.1.1"
