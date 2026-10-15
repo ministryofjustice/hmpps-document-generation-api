@@ -188,7 +188,7 @@
             <column ascending="true" name="code"/>
          </index>
       </table>
-      <table catalog="document" name="template_variable" numRows="37" remarks="" schema="public" type="TABLE">
+      <table catalog="document" name="template_variable" numRows="33" remarks="" schema="public" type="TABLE">
          <column autoUpdated="false" defaultValue="uuidv7()" digits="0" id="0" name="id" nullable="false" remarks="" size="2147483647" type="uuid" typeCode="1111">
             <child catalog="document" column="variable_id" foreignKey="fk_document_template_variable_variable_id" implied="false" onDeleteCascade="false" schema="public" table="document_template_variable"/>
          </column>
