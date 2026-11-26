@@ -21,6 +21,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.method.HandlerMethod
+import java.time.LocalTime
 
 const val TEMPLATES = "Templates"
 const val TEMPLATE_VARIABLES = "Template variables"
@@ -77,9 +78,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties, private val context
           .`in`(SecurityScheme.In.HEADER)
           .name("Authorization"),
       ),
-    )
-    .addSecurityItem(SecurityRequirement().addList("bearer-jwt", listOf("read", "write")))
-    .also { PrimitiveType.enablePartialTime() }
+    ).also { PrimitiveType.customClasses()[LocalTime::class.java.name] = PrimitiveType.PARTIAL_TIME }
 
   @Bean
   fun preAuthorizeCustomizer(): OperationCustomizer = OperationCustomizer { operation: Operation, handlerMethod: HandlerMethod ->
@@ -88,6 +87,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties, private val context
       val evalContext = StandardEvaluationContext()
       evalContext.beanResolver = BeanFactoryResolver(context)
       evalContext.setRootObject(
+        @Suppress("unused")
         object {
           fun hasRole(role: String) = listOf(role)
           fun hasAnyRole(vararg roles: String) = roles.toList()
@@ -96,17 +96,25 @@ class OpenApiConfiguration(buildProperties: BuildProperties, private val context
 
       val roles = try {
         (preAuthExp.getValue(evalContext) as List<*>).filterIsInstance<String>()
-      } catch (e: SpelEvaluationException) {
+      } catch (_: SpelEvaluationException) {
         emptyList()
       }
       if (roles.isNotEmpty()) {
-        operation.description = "${operation.description ?: ""}\n\n" +
-          "Requires one of the following roles:\n" +
-          roles.joinToString(prefix = "* ", separator = "\n* ")
+        val rolesDescription = """
+            Requires one of the following roles:
+            ${roles.joinToString(prefix = "* ", separator = "${System.lineSeparator()}* ")}
+        """.trimMargin()
+        operation.description = operation.description?.let { des ->
+          """
+            $des
+          """.trimMargin()
+        } ?: rolesDescription
+        roles.forEach { role ->
+          operation.addSecurityItem(SecurityRequirement().addList(role, listOf("read")))
+        }
       }
+      operation
     }
-
-    operation
   }
 
   private fun HandlerMethod.preAuthorizeForMethodOrClass() = getMethodAnnotation(PreAuthorize::class.java)?.value
