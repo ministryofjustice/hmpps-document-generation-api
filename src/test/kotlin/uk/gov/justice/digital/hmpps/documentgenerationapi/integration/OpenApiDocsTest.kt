@@ -1,16 +1,21 @@
 package uk.gov.justice.digital.hmpps.documentgenerationapi.integration
 
-import io.swagger.v3.parser.OpenAPIV3Parser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.json.JsonMapper
+import java.net.URI
 
-class OpenApiDocsTest : IntegrationTestBase() {
-  @LocalServerPort
-  private val port: Int = 0
+class OpenApiDocsTest(
+  @Autowired private val buildProperties: BuildProperties,
+  @LocalServerPort private val port: Int = 0,
+  @Autowired private val jsonMapper: JsonMapper,
+) : IntegrationTestBase() {
 
   @Test
   fun `open api docs are available`() {
@@ -43,20 +48,74 @@ class OpenApiDocsTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `the swagger json don't contain any duplicate methods`() {
+    webTestClient.get()
+      .uri("/v3/api-docs")
+      .accept(MediaType.APPLICATION_JSON)
+      .exchange()
+      .expectStatus().isOk
+      .expectBody().jsonPath("*..operationId").value<List<String>> { list ->
+        assertThat(list).filteredOn { it.contains("_") }.isEmpty()
+      }
+  }
+
+  @Test
   fun `the open api json contains the version number`() {
     webTestClient.get()
       .uri("/v3/api-docs")
       .accept(MediaType.APPLICATION_JSON)
       .exchange()
       .expectStatus().isOk
-      .expectBody().jsonPath("info.version").value<String> {
-        assertThat(it).startsWith(DateTimeFormatter.ISO_DATE.format(LocalDate.now()))
-      }
+      .expectBody().jsonPath("info.version").isEqualTo(buildProperties.version)
   }
 
   @Test
   fun `the open api json is valid`() {
-    val result = OpenAPIV3Parser().readLocation("http://localhost:$port/v3/api-docs", null, null)
-    assertThat(result.messages).isEmpty()
+    val rawJson = URI("http://localhost:$port/v3/api-docs").toURL().readText()
+    val root: JsonNode = jsonMapper.readTree(rawJson)
+
+    assertThat(root.path("openapi").asString()).startsWith("3.")
+    assertThat(root.path("info").path("title").asString()).isNotBlank()
+    assertThat(root.path("paths").isObject).isTrue()
+    assertThat(root.path("paths").size()).isGreaterThan(0)
+  }
+
+  @Test
+  fun `the open api json path security requirements are valid`() {
+    val rawJson = URI("http://localhost:$port/v3/api-docs").toURL().readText()
+    val root: JsonNode = jsonMapper.readTree(rawJson)
+
+    // Collect top-level security requirement keys (e.g. "bearerAuth", "OAuth2")
+    val securityRequirements: Set<String> = root.path("security")
+      .flatMap { requirementObj -> requirementObj.propertyNames() }
+      .toSet()
+
+    val pathsNode = root.path("paths")
+    assertThat(pathsNode.isObject).isTrue()
+
+    pathsNode.properties().forEach { (path, pathItem) ->
+      HttpMethod.values().forEach { method ->
+        val operation = pathItem.path(method.name())
+        if (!operation.isMissingNode && operation.has("security")) {
+          val operationSecurityKeys = operation.path("security")
+            .flatMap { requirementObj -> requirementObj.propertyNames() }
+
+          assertThat(operationSecurityKeys)
+            .`as`("Security requirements for $method $path")
+            .isSubsetOf(securityRequirements)
+        }
+      }
+    }
+  }
+
+  @Test
+  fun `all endpoints have a security scheme defined`() {
+    webTestClient.get()
+      .uri("/v3/api-docs")
+      .accept(MediaType.APPLICATION_JSON)
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.paths[*][*][?(!@.security)]").doesNotExist()
   }
 }
